@@ -7,7 +7,7 @@
 
 <br>
 
-**Una skill para agentes que mapea cómo cambiaron las restricciones de un campo en 20 años,<br>quién ya está construyendo sobre cada cambio y dónde todavía no hay nadie.**
+**Una skill para agentes que mapea cómo cambiaron las restricciones de un campo en dos décadas,<br>para encontrar dónde acaba de volverse posible un nuevo producto, emprendimiento o línea de investigación.**
 
 [English](../README.md) | **Español** | [简体中文](README_cn.md)
 

@@ -7,7 +7,7 @@
 
 <br>
 
-**An agent skill that maps how a field's constraints changed over 20 years,<br>who is already building on each change, and where nobody is yet.**
+**An agent skill that maps how a field's constraints changed over two decades,<br>to find where a new product, startup or line of research has just become possible.**
 
 **English** | [Español](README/README_es.md) | [简体中文](README/README_cn.md)
 
