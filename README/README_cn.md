@@ -8,6 +8,9 @@
 
 [English](../README.md) | [Español](README_es.md) | **简体中文**
 
+[![许可证: MIT](https://img.shields.io/badge/许可证-MIT-C9406B?style=flat-square&labelColor=111111)](../LICENSE)
+[![Python](https://img.shields.io/badge/python-3.10%2B-EE9AB3?style=flat-square&labelColor=111111)](../skills/paradigma/scripts/paradigma.py)
+
 
 [快速开始](#快速开始) · [为什么关注约束](#为什么关注约束) · [工作原理](#工作原理) · [产出内容](#产出内容) · [安装](#安装) · [用法](#用法) · [模型选择](#选择哪个模型运行) · [计算方法](#计算方法) · [局限](#局限) · [常见问题](#常见问题)
 

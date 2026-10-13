@@ -8,6 +8,9 @@
 
 [English](../README.md) | **Español** | [简体中文](README_cn.md)
 
+[![Licencia: MIT](https://img.shields.io/badge/licencia-MIT-C9406B?style=flat-square&labelColor=111111)](../LICENSE)
+[![Python](https://img.shields.io/badge/python-3.10%2B-EE9AB3?style=flat-square&labelColor=111111)](../skills/paradigma/scripts/paradigma.py)
+
 
 [Inicio rápido](#inicio-rápido) · [Por qué](#por-qué-restricciones) · [Cómo funciona](#cómo-funciona) · [Qué obtenés](#qué-obtenés) · [Instalación](#instalación) · [Uso](#uso) · [Modelos](#con-qué-modelo-usarlo) · [La matemática](#la-matemática) · [Límites](#límites) · [Preguntas](#preguntas-frecuentes)
 

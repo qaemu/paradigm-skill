@@ -8,6 +8,9 @@
 
 **English** | [Español](README/README_es.md) | [简体中文](README/README_cn.md)
 
+[![License: MIT](https://img.shields.io/badge/license-MIT-C9406B?style=flat-square&labelColor=111111)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.10%2B-EE9AB3?style=flat-square&labelColor=111111)](skills/paradigma/scripts/paradigma.py)
+
 
 [Quick start](#quick-start) · [Why](#why-constraints) · [How it works](#how-it-works) · [What you get](#what-you-get) · [Install](#install) · [Usage](#usage) · [Models](#which-model-to-run-it-on) · [The math](#the-math) · [Limits](#limits) · [FAQ](#faq)
 
