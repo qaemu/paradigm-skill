@@ -5,8 +5,8 @@
   "author": {
     "name": "qaemu"
   },
-  "homepage": "https://github.com/qaemu/paradigm-skill",
-  "repository": "https://github.com/qaemu/paradigm-skill",
+  "homepage": "https://github.com/qaemu/paradigma-skill",
+  "repository": "https://github.com/qaemu/paradigma-skill",
   "license": "MIT",
   "keywords": ["market-research", "innovation", "experience-curves", "agent-skill", "research"]
 }

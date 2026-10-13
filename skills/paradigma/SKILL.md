@@ -221,7 +221,7 @@ The engine is `scripts/paradigma.py`, bundled next to this SKILL.md. Copy it int
 1. `cp "${CLAUDE_SKILL_DIR}/scripts/paradigma.py" .` (Claude Code sets `CLAUDE_SKILL_DIR`).
 2. Copy it from the `scripts/` folder beside this SKILL.md, wherever the host installed the skill.
 3. If the host loaded only SKILL.md, download it:
-   `curl -fsSL https://raw.githubusercontent.com/qaemu/paradigm-skill/main/skills/paradigma/scripts/paradigma.py -o paradigma.py`
+   `curl -fsSL https://raw.githubusercontent.com/qaemu/paradigma-skill/main/skills/paradigma/scripts/paradigma.py -o paradigma.py`
 
 Never rewrite the engine from memory. If none of these work, stop and tell the user the engine is missing.
 

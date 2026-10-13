@@ -21,7 +21,7 @@
 ## Inicio rápido
 
 ```bash
-npx skills add qaemu/paradigm-skill
+npx skills add qaemu/paradigma-skill
 ```
 
 Después, en tu agente:
@@ -101,9 +101,9 @@ PARADIGMA sigue el formato abierto [Agent Skills](https://agentskills.io): un `S
 ### Cualquier agente (skills CLI)
 
 ```bash
-npx skills add qaemu/paradigm-skill                    # proyecto actual
-npx skills add qaemu/paradigm-skill -g                 # todos los proyectos
-npx skills add qaemu/paradigm-skill -a claude-code -a opencode
+npx skills add qaemu/paradigma-skill                    # proyecto actual
+npx skills add qaemu/paradigma-skill -g                 # todos los proyectos
+npx skills add qaemu/paradigma-skill -a claude-code -a opencode
 ```
 
 Usa la [skills CLI](https://github.com/vercel-labs/skills), compatible con Claude Code, OpenCode, Codex, Cursor y muchos más.
@@ -113,7 +113,7 @@ Usa la [skills CLI](https://github.com/vercel-labs/skills), compatible con Claud
 Como plugin, que te da actualizaciones a través de `/plugin`:
 
 ```text
-/plugin marketplace add qaemu/paradigm-skill
+/plugin marketplace add qaemu/paradigma-skill
 /plugin install paradigma@paradigma
 ```
 
@@ -122,8 +122,8 @@ Las skills de plugins llevan prefijo, así que se ejecuta como `/paradigma:parad
 O como skill personal, que se ejecuta como `/paradigma <campo>`:
 
 ```bash
-git clone https://github.com/qaemu/paradigm-skill.git
-mkdir -p ~/.claude/skills && cp -r paradigm-skill/skills/paradigma ~/.claude/skills/
+git clone https://github.com/qaemu/paradigma-skill.git
+mkdir -p ~/.claude/skills && cp -r paradigma-skill/skills/paradigma ~/.claude/skills/
 ```
 
 ### Apps de Claude (web, escritorio, móvil)
@@ -137,8 +137,8 @@ Guía de Anthropic: [Use skills in Claude](https://support.claude.com/en/article
 ### OpenCode
 
 ```bash
-git clone https://github.com/qaemu/paradigm-skill.git
-mkdir -p ~/.config/opencode/skills && cp -r paradigm-skill/skills/paradigma ~/.config/opencode/skills/
+git clone https://github.com/qaemu/paradigma-skill.git
+mkdir -p ~/.config/opencode/skills && cp -r paradigma-skill/skills/paradigma ~/.config/opencode/skills/
 ```
 
 OpenCode también lee `~/.claude/skills/`, así que una instalación de Claude Code funciona ahí también. Primero comprobá que la búsqueda web funcione con tu proveedor. Sin ella, PARADIGMA no puede reunir datos.
@@ -277,7 +277,7 @@ Un informe de mercado mide el tamaño de un mercado. PARADIGMA pregunta qué sup
 ## Repositorio
 
 ```text
-paradigm-skill/
+paradigma-skill/
 ├── .claude-plugin/          manifiestos de marketplace y plugin de Claude Code
 ├── skills/paradigma/
 │   ├── SKILL.md             instrucciones que sigue el agente

@@ -21,7 +21,7 @@
 ## 快速开始
 
 ```bash
-npx skills add qaemu/paradigm-skill
+npx skills add qaemu/paradigma-skill
 ```
 
 然后在你的智能体中输入：
@@ -101,9 +101,9 @@ PARADIGMA 遵循开放的 [Agent Skills](https://agentskills.io) 格式：一个
 ### 任意智能体（skills CLI）
 
 ```bash
-npx skills add qaemu/paradigm-skill                    # 当前项目
-npx skills add qaemu/paradigm-skill -g                 # 所有项目
-npx skills add qaemu/paradigm-skill -a claude-code -a opencode
+npx skills add qaemu/paradigma-skill                    # 当前项目
+npx skills add qaemu/paradigma-skill -g                 # 所有项目
+npx skills add qaemu/paradigma-skill -a claude-code -a opencode
 ```
 
 使用 [skills CLI](https://github.com/vercel-labs/skills)，支持 Claude Code、OpenCode、Codex、Cursor 等众多工具。
@@ -113,7 +113,7 @@ npx skills add qaemu/paradigm-skill -a claude-code -a opencode
 作为插件安装，可通过 `/plugin` 获取更新：
 
 ```text
-/plugin marketplace add qaemu/paradigm-skill
+/plugin marketplace add qaemu/paradigma-skill
 /plugin install paradigma@paradigma
 ```
 
@@ -122,8 +122,8 @@ npx skills add qaemu/paradigm-skill -a claude-code -a opencode
 或作为个人技能安装，运行方式为 `/paradigma <领域>`：
 
 ```bash
-git clone https://github.com/qaemu/paradigm-skill.git
-mkdir -p ~/.claude/skills && cp -r paradigm-skill/skills/paradigma ~/.claude/skills/
+git clone https://github.com/qaemu/paradigma-skill.git
+mkdir -p ~/.claude/skills && cp -r paradigma-skill/skills/paradigma ~/.claude/skills/
 ```
 
 ### Claude 应用（网页版、桌面版、移动版）
@@ -137,8 +137,8 @@ mkdir -p ~/.claude/skills && cp -r paradigm-skill/skills/paradigma ~/.claude/ski
 ### OpenCode
 
 ```bash
-git clone https://github.com/qaemu/paradigm-skill.git
-mkdir -p ~/.config/opencode/skills && cp -r paradigm-skill/skills/paradigma ~/.config/opencode/skills/
+git clone https://github.com/qaemu/paradigma-skill.git
+mkdir -p ~/.config/opencode/skills && cp -r paradigma-skill/skills/paradigma ~/.config/opencode/skills/
 ```
 
 OpenCode 也会读取 `~/.claude/skills/`，因此在 Claude Code 中安装的技能同样可以在这里使用。请先确认你的服务商支持网页搜索。没有网页搜索，PARADIGMA 无法收集数据。
@@ -277,7 +277,7 @@ PARADIGMA 使用的所有来源都是免费的。报告会注明付费数据库�
 ## 仓库结构
 
 ```text
-paradigm-skill/
+paradigma-skill/
 ├── .claude-plugin/          Claude Code 插件市场与插件清单
 ├── skills/paradigma/
 │   ├── SKILL.md             智能体遵循的指令
