@@ -1,0 +1,14 @@
+{
+  "name": "paradigma",
+  "description": "PARADIGMA: map which constraints in a field fell, who is building on them, and where the white space is.",
+  "owner": {
+    "name": "qaemu"
+  },
+  "plugins": [
+    {
+      "name": "paradigma",
+      "source": "./",
+      "description": "Constraint-shift panorama of any field: robust cost curves, non-cost sweep, activity scan, gap matrix, why-not check, independent verification."
+    }
+  ]
+}
