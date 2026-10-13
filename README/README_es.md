@@ -8,11 +8,6 @@
 
 [English](../README.md) | **Español** | [简体中文](README_cn.md)
 
-[![Versión](https://img.shields.io/badge/versión-0.1.0%20experimental-C9406B?style=flat-square&labelColor=111111)](#límites)
-[![Licencia: MIT](https://img.shields.io/badge/licencia-MIT-C9406B?style=flat-square&labelColor=111111)](../LICENSE)
-[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-compatible-EE9AB3?style=flat-square&labelColor=111111)](https://agentskills.io)
-[![Plugin de Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-EE9AB3?style=flat-square&labelColor=111111)](#claude-code)
-[![Python](https://img.shields.io/badge/python-3.10%2B-EE9AB3?style=flat-square&labelColor=111111)](../skills/paradigma/scripts/paradigma.py)
 
 [Inicio rápido](#inicio-rápido) · [Por qué](#por-qué-restricciones) · [Cómo funciona](#cómo-funciona) · [Qué obtenés](#qué-obtenés) · [Instalación](#instalación) · [Uso](#uso) · [Modelos](#con-qué-modelo-usarlo) · [La matemática](#la-matemática) · [Límites](#límites) · [Preguntas](#preguntas-frecuentes)
 

@@ -8,11 +8,6 @@
 
 **English** | [Español](README/README_es.md) | [简体中文](README/README_cn.md)
 
-[![Version](https://img.shields.io/badge/version-0.1.0%20experimental-C9406B?style=flat-square&labelColor=111111)](#limits)
-[![License: MIT](https://img.shields.io/badge/license-MIT-C9406B?style=flat-square&labelColor=111111)](LICENSE)
-[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-compatible-EE9AB3?style=flat-square&labelColor=111111)](https://agentskills.io)
-[![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-EE9AB3?style=flat-square&labelColor=111111)](#claude-code)
-[![Python](https://img.shields.io/badge/python-3.10%2B-EE9AB3?style=flat-square&labelColor=111111)](skills/paradigma/scripts/paradigma.py)
 
 [Quick start](#quick-start) · [Why](#why-constraints) · [How it works](#how-it-works) · [What you get](#what-you-get) · [Install](#install) · [Usage](#usage) · [Models](#which-model-to-run-it-on) · [The math](#the-math) · [Limits](#limits) · [FAQ](#faq)
 
