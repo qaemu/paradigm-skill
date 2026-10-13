@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 440" width="1280" height="440" role="img" aria-label="PARADIGMA: map how a field's constraints changed over two decades, and find what just became possible" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+<title>PARADIGMA: map how a field's constraints changed over two decades, and find what just became possible</title>
+<rect width="1280" height="440" rx="20" fill="#FFF6F8"/>
+<text x="72" y="176" font-size="76" font-weight="600" fill="#111111" text-anchor="start" letter-spacing="-2" textLength="452" lengthAdjust="spacingAndGlyphs">PARADIGMA</text>
+<text x="74" y="230" font-size="24" font-weight="400" fill="#3D3D44" text-anchor="start" >Map how a field's constraints changed</text>
+<text x="74" y="262" font-size="24" font-weight="400" fill="#3D3D44" text-anchor="start" >over two decades, and find what just</text>
+<text x="74" y="294" font-size="24" font-weight="400" fill="#3D3D44" text-anchor="start" >became possible.</text>
+<rect x="73.5" y="335.5" width="115" height="33" rx="16.5" fill="none" stroke="#F7CFDB"/>
+<rect x="74" y="336" width="114" height="32" rx="16.0" fill="#FFFFFF"/><text x="131.12" y="357.04" font-size="14" font-weight="500" fill="#111111" text-anchor="middle" >Agent skill</text>
+<rect x="197.74" y="335.5" width="115" height="33" rx="16.5" fill="none" stroke="#F7CFDB"/>
+<rect x="198.24" y="336" width="114" height="32" rx="16.0" fill="#FFFFFF"/><text x="255.36" y="357.04" font-size="14" font-weight="500" fill="#111111" text-anchor="middle" >Claude Code</text>
+<rect x="321.98" y="335.5" width="92" height="33" rx="16.5" fill="none" stroke="#F7CFDB"/>
+<rect x="322.48" y="336" width="91" height="32" rx="16.0" fill="#FFFFFF"/><text x="367.84000000000003" y="357.04" font-size="14" font-weight="500" fill="#111111" text-anchor="middle" >OpenCode</text>
+<rect x="422.70000000000005" y="335.5" width="68" height="33" rx="16.5" fill="none" stroke="#F7CFDB"/>
+<rect x="423.20000000000005" y="336" width="67" height="32" rx="16.0" fill="#FFFFFF"/><text x="456.80000000000007" y="357.04" font-size="14" font-weight="500" fill="#111111" text-anchor="middle" >Codex</text>
+<rect x="668" y="60" width="548" height="328" rx="16" fill="#F7CFDB" opacity="0.45"/>
+<rect x="668" y="56" width="548" height="328" rx="16" fill="#FFFFFF" stroke="#F7CFDB"/>
+<text x="696" y="100" font-size="20" font-weight="600" fill="#111111" text-anchor="start" >Industrial vibration sensor</text>
+<text x="696" y="124" font-size="14" font-weight="400" fill="#7A7A85" text-anchor="start" >Cost per measurement channel, constant USD</text>
+<rect x="1088" y="82" width="104" height="26" rx="13.0" fill="#FDE8EE"/><text x="1140.04" y="99.68" font-size="13" font-weight="600" fill="#C9406B" text-anchor="middle" >White space</text>
+<line x1="696" y1="148.0" x2="1188" y2="148.0" stroke="#FDE8EE" stroke-width="1"/>
+<line x1="696" y1="196.0" x2="1188" y2="196.0" stroke="#FDE8EE" stroke-width="1"/>
+<line x1="696" y1="244.0" x2="1188" y2="244.0" stroke="#FDE8EE" stroke-width="1"/>
+<line x1="696" y1="292.0" x2="1188" y2="292.0" stroke="#FDE8EE" stroke-width="1"/>
+<polygon points="706.0,292 706.0,158.3 742.3,165.2 778.6,178.1 814.9,183.5 851.2,191.0 887.5,204.5 923.8,220.5 960.2,227.6 996.5,235.9 1032.8,237.0 1069.1,250.2 1105.4,255.3 1141.7,262.6 1178.0,270.5 1178.0,292" fill="#FDE8EE" opacity="0.7"/>
+<polyline points="706.0,158.3 742.3,165.2 778.6,178.1 814.9,183.5 851.2,191.0 887.5,204.5 923.8,220.5 960.2,227.6 996.5,235.9 1032.8,237.0 1069.1,250.2 1105.4,255.3 1141.7,262.6 1178.0,270.5" fill="none" stroke="#C9406B" stroke-width="2.5" stroke-linejoin="round"/>
+<circle cx="706.0" cy="158.3" r="4" fill="#FFFFFF" stroke="#C9406B" stroke-width="2"/>
+<circle cx="814.9" cy="183.5" r="4" fill="#FFFFFF" stroke="#C9406B" stroke-width="2"/>
+<circle cx="923.8" cy="220.5" r="4" fill="#FFFFFF" stroke="#C9406B" stroke-width="2"/>
+<circle cx="1032.8" cy="237.0" r="4" fill="#FFFFFF" stroke="#C9406B" stroke-width="2"/>
+<circle cx="1141.7" cy="262.6" r="4" fill="#FFFFFF" stroke="#C9406B" stroke-width="2"/>
+<circle cx="1178.0" cy="270.5" r="4" fill="#FFFFFF" stroke="#C9406B" stroke-width="2"/>
+<line x1="696" y1="237.3" x2="1188" y2="237.3" stroke="#EE9AB3" stroke-width="1.5" stroke-dasharray="5 5"/>
+<text x="1188" y="229.28" font-size="12" font-weight="400" fill="#7A7A85" text-anchor="end" >viable below this cost</text>
+<text x="696" y="312" font-size="12" font-weight="400" fill="#7A7A85" text-anchor="start" >2005</text>
+<text x="1188" y="312" font-size="12" font-weight="400" fill="#7A7A85" text-anchor="end" >2025</text>
+<text x="696.0" y="342" font-size="20" font-weight="600" fill="#111111" text-anchor="start" >−21% / yr</text>
+<text x="696.0" y="362" font-size="12" font-weight="400" fill="#7A7A85" text-anchor="start" >robust trend</text>
+<text x="819.0" y="342" font-size="20" font-weight="600" fill="#111111" text-anchor="start" >110×</text>
+<text x="819.0" y="362" font-size="12" font-weight="400" fill="#7A7A85" text-anchor="start" >cheaper</text>
+<text x="942.0" y="342" font-size="20" font-weight="600" fill="#111111" text-anchor="start" >A</text>
+<text x="942.0" y="362" font-size="12" font-weight="400" fill="#7A7A85" text-anchor="start" >data grade</text>
+<text x="1065.0" y="342" font-size="20" font-weight="600" fill="#111111" text-anchor="start" >3</text>
+<text x="1065.0" y="362" font-size="12" font-weight="400" fill="#7A7A85" text-anchor="start" >companies building</text>
+<text x="1196" y="414" font-size="12" font-weight="400" fill="#7A7A85" text-anchor="end" >Illustrative example</text>
+</svg>

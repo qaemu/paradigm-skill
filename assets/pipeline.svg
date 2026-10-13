@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 330" width="1200" height="330" role="img" aria-label="PARADIGMA in eight steps, from mapping the field to the report" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+<title>PARADIGMA in eight steps, from mapping the field to the report</title>
+<rect width="1200" height="330" rx="20" fill="#FFF6F8"/>
+<rect x="36" y="31" width="264" height="122" rx="12" fill="#FFFFFF" stroke="#F7CFDB"/>
+<circle cx="72" cy="69" r="15" fill="#FDE8EE"/>
+<text x="72" y="74.5" font-size="15" font-weight="600" fill="#C9406B" text-anchor="middle" >1</text>
+<text x="58" y="115" font-size="19" font-weight="600" fill="#111111" text-anchor="start" >Map the field</text>
+<text x="58" y="137" font-size="14" font-weight="400" fill="#7A7A85" text-anchor="start" >12–25 constraints, parts to laws</text>
+<rect x="324" y="31" width="264" height="122" rx="12" fill="#FFFFFF" stroke="#F7CFDB"/>
+<circle cx="360" cy="69" r="15" fill="#FDE8EE"/>
+<text x="360" y="74.5" font-size="15" font-weight="600" fill="#C9406B" text-anchor="middle" >2</text>
+<text x="346" y="115" font-size="19" font-weight="600" fill="#111111" text-anchor="start" >Price curves</text>
+<text x="346" y="137" font-size="14" font-weight="400" fill="#7A7A85" text-anchor="start" >Yearly medians, inflation removed</text>
+<rect x="612" y="31" width="264" height="122" rx="12" fill="#FFFFFF" stroke="#F7CFDB"/>
+<circle cx="648" cy="69" r="15" fill="#FDE8EE"/>
+<text x="648" y="74.5" font-size="15" font-weight="600" fill="#C9406B" text-anchor="middle" >3</text>
+<text x="634" y="115" font-size="19" font-weight="600" fill="#111111" text-anchor="start" >Non-cost sweep</text>
+<text x="634" y="137" font-size="14" font-weight="400" fill="#7A7A85" text-anchor="start" >Laws, patents, skills, norms</text>
+<rect x="900" y="31" width="264" height="122" rx="12" fill="#FFFFFF" stroke="#F7CFDB"/>
+<circle cx="936" cy="69" r="15" fill="#FDE8EE"/>
+<text x="936" y="74.5" font-size="15" font-weight="600" fill="#C9406B" text-anchor="middle" >4</text>
+<text x="922" y="115" font-size="19" font-weight="600" fill="#111111" text-anchor="start" >Activity scan</text>
+<text x="922" y="137" font-size="14" font-weight="400" fill="#7A7A85" text-anchor="start" >Who builds on each change</text>
+<rect x="36" y="175" width="264" height="122" rx="12" fill="#FDE8EE" stroke="#F7CFDB"/>
+<circle cx="72" cy="213" r="15" fill="#C9406B"/>
+<text x="72" y="218.5" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle" >5</text>
+<text x="58" y="259" font-size="19" font-weight="600" fill="#111111" text-anchor="start" >Gap matrix</text>
+<text x="58" y="281" font-size="14" font-weight="400" fill="#7A7A85" text-anchor="start" >How far it fell vs. who builds</text>
+<rect x="324" y="175" width="264" height="122" rx="12" fill="#FDE8EE" stroke="#F7CFDB"/>
+<circle cx="360" cy="213" r="15" fill="#C9406B"/>
+<text x="360" y="218.5" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle" >6</text>
+<text x="346" y="259" font-size="19" font-weight="600" fill="#111111" text-anchor="start" >Why-not check</text>
+<text x="346" y="281" font-size="14" font-weight="400" fill="#7A7A85" text-anchor="start" >Untried, too early, or blocked</text>
+<rect x="612" y="175" width="264" height="122" rx="12" fill="#FFFFFF" stroke="#F7CFDB"/>
+<circle cx="648" cy="213" r="15" fill="#FDE8EE"/>
+<text x="648" y="218.5" font-size="15" font-weight="600" fill="#C9406B" text-anchor="middle" >7</text>
+<text x="634" y="259" font-size="19" font-weight="600" fill="#111111" text-anchor="start" >Independent check</text>
+<text x="634" y="281" font-size="14" font-weight="400" fill="#7A7A85" text-anchor="start" >A fresh agent re-opens sources</text>
+<rect x="900" y="175" width="264" height="122" rx="12" fill="#FFFFFF" stroke="#F7CFDB"/>
+<circle cx="936" cy="213" r="15" fill="#FDE8EE"/>
+<text x="936" y="218.5" font-size="15" font-weight="600" fill="#C9406B" text-anchor="middle" >8</text>
+<text x="922" y="259" font-size="19" font-weight="600" fill="#111111" text-anchor="start" >Report</text>
+<text x="922" y="281" font-size="14" font-weight="400" fill="#7A7A85" text-anchor="start" >Panorama, charts, sourced data</text>
+</svg>

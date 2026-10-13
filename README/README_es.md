@@ -1,9 +1,6 @@
 <div align="center">
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="../assets/banner-dark.svg">
-  <img alt="PARADIGMA: encontrá las restricciones que dejaron de ser ciertas y quién está construyendo sobre ellas" src="../assets/banner-light.svg" width="100%">
-</picture>
+<img alt="PARADIGMA: mapeá cómo cambiaron las restricciones de un campo en dos décadas y encontrá lo que acaba de volverse posible" src="../assets/banner.svg" width="100%">
 
 <br>
 
@@ -11,11 +8,11 @@
 
 [English](../README.md) | **Español** | [简体中文](README_cn.md)
 
-[![Versión](https://img.shields.io/badge/versión-0.1.0%20experimental-B97F00?style=flat-square&labelColor=1B2A38)](#límites)
-[![Licencia: MIT](https://img.shields.io/badge/licencia-MIT-0B7F6F?style=flat-square&labelColor=1B2A38)](../LICENSE)
-[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-compatible-5B6B7A?style=flat-square&labelColor=1B2A38)](https://agentskills.io)
-[![Plugin de Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-5B6B7A?style=flat-square&labelColor=1B2A38)](#claude-code)
-[![Python](https://img.shields.io/badge/python-3.10%2B-5B6B7A?style=flat-square&labelColor=1B2A38)](../skills/paradigma/scripts/paradigma.py)
+[![Versión](https://img.shields.io/badge/versión-0.1.0%20experimental-C9406B?style=flat-square&labelColor=111111)](#límites)
+[![Licencia: MIT](https://img.shields.io/badge/licencia-MIT-C9406B?style=flat-square&labelColor=111111)](../LICENSE)
+[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-compatible-EE9AB3?style=flat-square&labelColor=111111)](https://agentskills.io)
+[![Plugin de Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-EE9AB3?style=flat-square&labelColor=111111)](#claude-code)
+[![Python](https://img.shields.io/badge/python-3.10%2B-EE9AB3?style=flat-square&labelColor=111111)](../skills/paradigma/scripts/paradigma.py)
 
 [Inicio rápido](#inicio-rápido) · [Por qué](#por-qué-restricciones) · [Cómo funciona](#cómo-funciona) · [Qué obtenés](#qué-obtenés) · [Instalación](#instalación) · [Uso](#uso) · [Modelos](#con-qué-modelo-usarlo) · [La matemática](#la-matemática) · [Límites](#límites) · [Preguntas](#preguntas-frecuentes)
 
@@ -55,10 +52,7 @@ Esos cambios suelen ser públicos, así que seguirlos por sí solo no da ventaja
 
 ## Cómo funciona
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="../assets/pipeline-dark.svg">
-  <img alt="Ocho pasos: mapear el campo, curvas de precio, barrido no económico, escaneo de actividad, matriz de huecos, chequeo de por qué no, verificación independiente, informe" src="../assets/pipeline-light.svg" width="100%">
-</picture>
+<img alt="Ocho pasos: mapear el campo, curvas de precio, barrido no económico, escaneo de actividad, matriz de huecos, chequeo de por qué no, verificación independiente, informe" src="../assets/pipeline.svg" width="100%">
 
 | Paso | Qué pasa |
 |---|---|
@@ -82,10 +76,7 @@ Esos cambios suelen ser públicos, así que seguirlos por sí solo no da ventaja
 ## Qué obtenés
 
 <div align="center">
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="../assets/gap-matrix-dark.svg">
-  <img alt="Matriz de huecos con cuatro cuadrantes: espacio en blanco, saturado, dormido, riesgo de hype" src="../assets/gap-matrix-light.svg" width="78%">
-</picture>
+<img alt="Matriz de huecos con cuatro cuadrantes: espacio en blanco, saturado, dormido, riesgo de hype" src="../assets/gap-matrix.svg" width="78%">
 <br>
 <sub>Ilustración de la matriz de huecos. Una corrida real grafica las restricciones de tu campo.</sub>
 </div>
@@ -297,7 +288,7 @@ paradigm-skill/
 ├── dist/paradigma.zip       skill lista para subir a las apps de Claude (tools/package.sh)
 ├── tools/                   make_assets.py (gráficos del README), package.sh (regenera el ZIP)
 ├── README/                  traducciones del README
-└── assets/                  banner, proceso y matriz de huecos (claro + oscuro)
+└── assets/                  banner, proceso y matriz de huecos
 ```
 
 ```bash

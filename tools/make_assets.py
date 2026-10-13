@@ -1,236 +1,186 @@
 #!/usr/bin/env python3
-"""Generate README artwork for PARADIGMA (light + dark variants).
+"""Generate the README artwork for PARADIGMA.
 
-Visual language: an engineering drawing sheet. Graph-paper grid, sheet frame
-with zone markers, a title block, and a falling cost curve on a log scale that
-crosses a viability threshold. Pure SVG, system fonts only (GitHub renders
-README images as <img>, so web fonts and scripts are not available).
+Design system: adapted from the Cal.com DESIGN.md (VoltAgent/awesome-design-md),
+with its neutral grays swapped for a light pink and white palette.
+- White canvas, near-black ink for text, one sans-serif family.
+- Display type at weight 600 with negative tracking.
+- Soft-rounded cards (12-16px), 1px hairlines, no heavy shadows.
+- Show the product (a constraint card from a report), not an illustration of it.
+
+GitHub renders README images as <img>, so only system fonts are available.
 
     python3 tools/make_assets.py   -> writes assets/*.svg
 """
-import math
 import os
 import random
 
 OUT = os.path.join(os.path.dirname(__file__), "..", "assets")
-FONT = "Bahnschrift, 'DIN Alternate', 'DIN Condensed', 'Barlow Condensed', 'Roboto Condensed', 'Arial Narrow', Arial, sans-serif"
+SANS = "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
 
-THEMES = {
-    "light": dict(paper="#EDF1F4", ink="#1B2A38", soft="#5B6B7A", grid="#D3DCE4", grid2="#BAC7D3",
-                  amber="#B97F00", teal="#0B7F6F", tealfill="#0B7F6F", dot="#1B2A38"),
-    "dark": dict(paper="#0F2236", ink="#E4ECF3", soft="#9FB4C7", grid="#1C3550", grid2="#284767",
-                 amber="#F0B23E", teal="#3CC9B0", tealfill="#3CC9B0", dot="#E4ECF3"),
-}
+C = dict(
+    canvas="#FFFFFF",
+    blush="#FFF6F8",      # surface-soft
+    petal="#FDE8EE",      # surface-card
+    rose="#F7CFDB",       # hairline / strong surface
+    pink="#EE9AB3",       # soft accent
+    deep="#C9406B",       # data accent (curves, highlights)
+    ink="#111111",
+    body="#3D3D44",
+    muted="#7A7A85",
+)
 
 
 def svg(w, h, body, title):
     return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}" '
-            f'role="img" aria-label="{title}" font-family="{FONT}">\n<title>{title}</title>\n{body}\n</svg>\n')
+            f'role="img" aria-label="{title}" font-family="{SANS}">\n<title>{title}</title>\n{body}\n</svg>\n')
 
 
-def grid(x0, y0, x1, y1, step, c, minor, major, every=5):
-    out = []
-    i = 0
-    x = x0
-    while x <= x1 + 0.1:
-        col = major if i % every == 0 else minor
-        out.append(f'<line x1="{x}" y1="{y0}" x2="{x}" y2="{y1}" stroke="{col}" stroke-width="{0.9 if i % every == 0 else 0.5}"/>')
-        x += step; i += 1
-    i = 0
-    y = y0
-    while y <= y1 + 0.1:
-        col = major if i % every == 0 else minor
-        out.append(f'<line x1="{x0}" y1="{y}" x2="{x1}" y2="{y}" stroke="{col}" stroke-width="{0.9 if i % every == 0 else 0.5}"/>')
-        y += step; i += 1
-    return "\n".join(out)
+def t(x, y, s, size, fill, weight=400, anchor="start", extra=""):
+    return (f'<text x="{x}" y="{y}" font-size="{size}" font-weight="{weight}" fill="{fill}" '
+            f'text-anchor="{anchor}" {extra}>{s}</text>')
+
+
+def pill(x, y, label, fill, color, size=13, pad=12, h=26, weight=500):
+    w = len(label) * size * 0.56 + pad * 2
+    return (f'<rect x="{x}" y="{y}" width="{w:.0f}" height="{h}" rx="{h/2}" fill="{fill}"/>'
+            + t(x + w / 2, y + h / 2 + size * 0.36, label, size, color, weight, "middle")), w
 
 
 # ------------------------------------------------------------------ banner
-def banner(t):
-    W, H = 1280, 420
-    b = [f'<rect width="{W}" height="{H}" fill="{t["paper"]}"/>']
-    # sheet frame with zone markers (like a drawing sheet)
-    b.append(f'<rect x="16" y="16" width="{W-32}" height="{H-32}" fill="none" stroke="{t["ink"]}" stroke-width="1.6"/>')
-    b.append(f'<rect x="30" y="30" width="{W-60}" height="{H-60}" fill="none" stroke="{t["ink"]}" stroke-width="0.8"/>')
-    cols = 8
-    for i in range(cols + 1):
-        x = 30 + i * (W - 60) / cols
-        if 0 < i < cols:
-            b.append(f'<line x1="{x:.1f}" y1="16" x2="{x:.1f}" y2="30" stroke="{t["ink"]}" stroke-width="0.8"/>')
-            b.append(f'<line x1="{x:.1f}" y1="{H-30}" x2="{x:.1f}" y2="{H-16}" stroke="{t["ink"]}" stroke-width="0.8"/>')
-        if i < cols:
-            cx = x + (W - 60) / cols / 2
-            b.append(f'<text x="{cx:.1f}" y="27" font-size="10" fill="{t["soft"]}" text-anchor="middle">{i+1}</text>')
-            b.append(f'<text x="{cx:.1f}" y="{H-19}" font-size="10" fill="{t["soft"]}" text-anchor="middle">{i+1}</text>')
-    for j, r in enumerate("ABC"):
-        y = 30 + j * (H - 60) / 3
-        if j:
-            b.append(f'<line x1="16" y1="{y:.1f}" x2="30" y2="{y:.1f}" stroke="{t["ink"]}" stroke-width="0.8"/>')
-            b.append(f'<line x1="{W-30}" y1="{y:.1f}" x2="{W-16}" y2="{y:.1f}" stroke="{t["ink"]}" stroke-width="0.8"/>')
-        cy = y + (H - 60) / 6 + 4
-        b.append(f'<text x="23" y="{cy:.1f}" font-size="10" fill="{t["soft"]}" text-anchor="middle">{r}</text>')
-        b.append(f'<text x="{W-23}" y="{cy:.1f}" font-size="10" fill="{t["soft"]}" text-anchor="middle">{r}</text>')
+def banner():
+    W, H = 1280, 440
+    b = [f'<rect width="{W}" height="{H}" rx="20" fill="{C["blush"]}"/>']
 
-    # chart on graph paper
-    X0, Y0, X1, Y1 = 640, 62, 1220, 322
-    b.append(grid(X0, Y0, X1, Y1, 13, t["grid"], t["grid"], t["grid2"]))
-    b.append(f'<line x1="{X0}" y1="{Y0}" x2="{X0}" y2="{Y1}" stroke="{t["ink"]}" stroke-width="1.2"/>')
-    b.append(f'<line x1="{X0}" y1="{Y1}" x2="{X1}" y2="{Y1}" stroke="{t["ink"]}" stroke-width="1.2"/>')
-    # log decade ticks
-    for k, lab in enumerate(["10⁴", "10³", "10²"]):
-        y = Y0 + 16 + k * 112
-        b.append(f'<line x1="{X0-6}" y1="{y}" x2="{X0}" y2="{y}" stroke="{t["ink"]}" stroke-width="1"/>')
-        b.append(f'<text x="{X0-10}" y="{y+4}" font-size="12" fill="{t["soft"]}" text-anchor="end">{lab}</text>')
-    b.append(f'<text x="{X0-44}" y="{(Y0+Y1)/2}" font-size="12" fill="{t["soft"]}" text-anchor="middle" '
-             f'transform="rotate(-90 {X0-44} {(Y0+Y1)/2})">cost per unit of performance · log</text>')
-    b.append(f'<text x="{X1}" y="{Y1+22}" font-size="12" fill="{t["soft"]}" text-anchor="end">20 years</text>')
+    # left: wordmark + statement
+    b.append(t(72, 176, "PARADIGMA", 76, C["ink"], 600, extra='letter-spacing="-2" textLength="452" lengthAdjust="spacingAndGlyphs"'))
+    b.append(t(74, 230, "Map how a field's constraints changed", 24, C["body"]))
+    b.append(t(74, 262, "over two decades, and find what just", 24, C["body"]))
+    b.append(t(74, 294, "became possible.", 24, C["body"]))
+    x = 74
+    for lab in ["Agent skill", "Claude Code", "OpenCode", "Codex"]:
+        p, w = pill(x, 336, lab, C["canvas"], C["ink"], 14, 14, 32)
+        b.append(f'<rect x="{x-0.5}" y="335.5" width="{w+1:.0f}" height="33" rx="16.5" fill="none" stroke="{C["rose"]}"/>')
+        b.append(p)
+        x += w + 10
 
-    random.seed(7)
-    n = 15
-    xs = [X0 + 30 + i * (X1 - X0 - 60) / (n - 1) for i in range(n)]
-    trend = lambda x: Y0 + 30 + (x - X0 - 30) / (X1 - X0 - 60) * 236
-    meds = []
-    for i, x in enumerate(xs):
-        ym = trend(x) + random.uniform(-9, 9)
-        meds.append((x, ym))
-        for _ in range(random.randint(1, 3)):
-            b.append(f'<circle cx="{x + random.uniform(-6, 6):.1f}" cy="{ym + random.uniform(-14, 14):.1f}" r="2.2" '
-                     f'fill="{t["soft"]}" opacity="0.55"/>')
-    b.append(f'<circle cx="{xs[6]+2:.1f}" cy="{Y0+8}" r="2.2" fill="{t["soft"]}" opacity="0.55"/>')  # an outlier the median ignores
-    b.append('<polyline fill="none" stroke="{}" stroke-width="1.6" points="{}"/>'.format(
-        t["ink"], " ".join(f"{x:.1f},{y:.1f}" for x, y in meds)))
-    for x, y in meds:
-        b.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="3.6" fill="{t["paper"]}" stroke="{t["ink"]}" stroke-width="1.6"/>')
-    b.append(f'<line x1="{X0+30}" y1="{trend(X0+30):.1f}" x2="{X1-30}" y2="{trend(X1-30):.1f}" '
-             f'stroke="{t["ink"]}" stroke-width="1.2" stroke-dasharray="7 5" opacity="0.7"/>')
-    # viability threshold
-    TY = 228
-    b.append(f'<line x1="{X0}" y1="{TY}" x2="{X1}" y2="{TY}" stroke="{t["amber"]}" stroke-width="2" stroke-dasharray="2 5" stroke-linecap="round"/>')
-    b.append(f'<text x="{X0+10}" y="{TY-9}" font-size="13" fill="{t["amber"]}">viable below this line</text>')
-    cx = X0 + 30 + (TY - Y0 - 30) / 236 * (X1 - X0 - 60)
-    b.append(f'<circle cx="{cx:.1f}" cy="{TY}" r="11" fill="none" stroke="{t["teal"]}" stroke-width="2.2"/>')
-    b.append(f'<circle cx="{cx:.1f}" cy="{TY}" r="4" fill="{t["teal"]}"/>')
-    b.append(f'<line x1="{cx-8:.1f}" y1="{TY+8}" x2="{cx-40:.1f}" y2="{TY+40}" stroke="{t["teal"]}" stroke-width="1.2"/>')
-    b.append(f'<text x="{cx-44:.1f}" y="{TY+54}" font-size="14" fill="{t["teal"]}" text-anchor="end">the constraint stops being true</text>')
+    # right: a constraint card, as it appears in a report
+    X, Y, CW, CH = 668, 56, 548, 328
+    b.append(f'<rect x="{X}" y="{Y+4}" width="{CW}" height="{CH}" rx="16" fill="{C["rose"]}" opacity="0.45"/>')
+    b.append(f'<rect x="{X}" y="{Y}" width="{CW}" height="{CH}" rx="16" fill="{C["canvas"]}" stroke="{C["rose"]}"/>')
+    b.append(t(X + 28, Y + 44, "Industrial vibration sensor", 20, C["ink"], 600))
+    b.append(t(X + 28, Y + 68, "Cost per measurement channel, constant USD", 14, C["muted"]))
+    p, w = pill(X + CW - 128, Y + 26, "White space", C["petal"], C["deep"], 13, 12, 26, 600)
+    b.append(p)
 
-    # wordmark + statement
-    b.append(f'<text x="64" y="138" font-size="84" font-weight="700" textLength="416" lengthAdjust="spacingAndGlyphs" fill="{t["ink"]}">PARADIGMA</text>')
-    b.append(f'<line x1="66" y1="160" x2="482" y2="160" stroke="{t["ink"]}" stroke-width="1"/>')
-    b.append(f'<text x="66" y="194" font-size="21" fill="{t["ink"]}">Find the constraints that stopped being true,</text>')
-    b.append(f'<text x="66" y="222" font-size="21" fill="{t["ink"]}">and who is building on them.</text>')
+    # mini log chart
+    gx0, gy0, gx1, gy1 = X + 28, Y + 92, X + CW - 28, Y + 236
+    for i in range(4):
+        y = gy0 + i * (gy1 - gy0) / 3
+        b.append(f'<line x1="{gx0}" y1="{y:.1f}" x2="{gx1}" y2="{y:.1f}" stroke="{C["petal"]}" stroke-width="1"/>')
+    random.seed(4)
+    n = 14
+    pts = []
+    for i in range(n):
+        x = gx0 + 10 + i * (gx1 - gx0 - 20) / (n - 1)
+        y = gy0 + 14 + i * (gy1 - gy0 - 30) / (n - 1) + random.uniform(-7, 7)
+        pts.append((x, y))
+    area = " ".join(f"{x:.1f},{y:.1f}" for x, y in pts)
+    b.append(f'<polygon points="{pts[0][0]:.1f},{gy1} {area} {pts[-1][0]:.1f},{gy1}" fill="{C["petal"]}" opacity="0.7"/>')
+    b.append(f'<polyline points="{area}" fill="none" stroke="{C["deep"]}" stroke-width="2.5" stroke-linejoin="round"/>')
+    for x, y in pts[::3] + [pts[-1]]:
+        b.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="4" fill="{C["canvas"]}" stroke="{C["deep"]}" stroke-width="2"/>')
+    ty = gy0 + 0.62 * (gy1 - gy0)
+    b.append(f'<line x1="{gx0}" y1="{ty:.1f}" x2="{gx1}" y2="{ty:.1f}" stroke="{C["pink"]}" stroke-width="1.5" stroke-dasharray="5 5"/>')
+    b.append(t(gx1, ty - 8, "viable below this cost", 12, C["muted"], 400, "end"))
+    b.append(t(gx0, gy1 + 20, "2005", 12, C["muted"]))
+    b.append(t(gx1, gy1 + 20, "2025", 12, C["muted"], 400, "end"))
 
-    # title block
-    TX, TYb, TW, TH = 66, 284, 420, 74
-    b.append(f'<rect x="{TX}" y="{TYb}" width="{TW}" height="{TH}" fill="none" stroke="{t["ink"]}" stroke-width="1.2"/>')
-    b.append(f'<line x1="{TX}" y1="{TYb+37}" x2="{TX+TW}" y2="{TYb+37}" stroke="{t["ink"]}" stroke-width="0.8"/>')
-    for fx in (0.5, 0.75):
-        b.append(f'<line x1="{TX+TW*fx}" y1="{TYb+37}" x2="{TX+TW*fx}" y2="{TYb+TH}" stroke="{t["ink"]}" stroke-width="0.8"/>')
-    b.append(f'<text x="{TX+10}" y="{TYb+15}" font-size="10" fill="{t["soft"]}">drawing</text>')
-    b.append(f'<text x="{TX+10}" y="{TYb+31}" font-size="15" fill="{t["ink"]}">Constraint-shift panorama of any field</text>')
-    cells = [("method", "agent skill", 0), ("scale", "log", 0.5), ("rev", "0.1", 0.75)]
-    for lab, val, fx in cells:
-        x = TX + TW * fx + 10
-        b.append(f'<text x="{x}" y="{TYb+52}" font-size="10" fill="{t["soft"]}">{lab}</text>')
-        b.append(f'<text x="{x}" y="{TYb+68}" font-size="15" fill="{t["ink"]}">{val}</text>')
-    return svg(W, H, "\n".join(b), "PARADIGMA: find the constraints that stopped being true, and who is building on them")
+    # stats row
+    sy = Y + 286
+    stats = [("−21% / yr", "robust trend"), ("110×", "cheaper"), ("A", "data grade"), ("3", "companies building")]
+    colw = (CW - 56) / 4
+    for i, (big, small) in enumerate(stats):
+        sx = X + 28 + i * colw
+        b.append(t(sx, sy, big, 20, C["ink"], 600))
+        b.append(t(sx, sy + 20, small, 12, C["muted"]))
+    b.append(t(X + CW - 20, Y + CH + 30, "Illustrative example", 12, C["muted"], 400, "end"))
+    return svg(W, H, "\n".join(b), "PARADIGMA: map how a field's constraints changed over two decades, and find what just became possible")
 
 
 # ---------------------------------------------------------------- pipeline
 STEPS = [
-    ("Map the field", "Break it into constraints:", "parts, labor, law, norms"),
-    ("Price curves", "Yearly medians, robust trend,", "inflation removed"),
-    ("Non-cost sweep", "Laws, expiring patents,", "skills, norms, supply"),
-    ("Activity scan", "Who builds on each one:", "announced, deployed, paying"),
-    ("Gap matrix", "How far it fell versus", "how many are building"),
-    ("Why-not check", "Untried, tried too early,", "or still blocked"),
-    ("Independent check", "A fresh agent re-opens", "every source"),
-    ("Report", "Panorama, charts, and a", "workbook with every link"),
+    ("Map the field", "12–25 constraints, parts to laws"),
+    ("Price curves", "Yearly medians, inflation removed"),
+    ("Non-cost sweep", "Laws, patents, skills, norms"),
+    ("Activity scan", "Who builds on each change"),
+    ("Gap matrix", "How far it fell vs. who builds"),
+    ("Why-not check", "Untried, too early, or blocked"),
+    ("Independent check", "A fresh agent re-opens sources"),
+    ("Report", "Panorama, charts, sourced data"),
 ]
 
 
-def pipeline(t):
-    W, H = 1200, 372
-    b = [f'<rect width="{W}" height="{H}" fill="{t["paper"]}"/>']
-    b.append(grid(0, 0, W, H, 12, t["grid"], t["grid"], t["grid"], every=1000))
-    bw, bh, gap, x0 = 248, 118, 48, 26
-    rows = [(26, [0, 1, 2, 3]), (228, [7, 6, 5, 4])]
-    pos = {}
-    for y, idxs in rows:
-        for col, i in enumerate(idxs):
-            pos[i] = (x0 + col * (bw + gap), y)
-    # connectors
-    def arrow(x1, y1, x2, y2):
-        ang = math.atan2(y2 - y1, x2 - x1)
-        a1 = (x2 - 9 * math.cos(ang - 0.45), y2 - 9 * math.sin(ang - 0.45))
-        a2 = (x2 - 9 * math.cos(ang + 0.45), y2 - 9 * math.sin(ang + 0.45))
-        return (f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{t["ink"]}" stroke-width="1.3"/>'
-                f'<polygon points="{x2},{y2} {a1[0]:.1f},{a1[1]:.1f} {a2[0]:.1f},{a2[1]:.1f}" fill="{t["ink"]}"/>')
-    for i in range(7):
-        (xa, ya), (xb, yb) = pos[i], pos[i + 1]
-        if ya == yb and xb > xa:
-            b.append(arrow(xa + bw, ya + bh / 2, xb - 2, yb + bh / 2))
-        elif ya == yb:
-            b.append(arrow(xa, ya + bh / 2, xb + bw + 2, yb + bh / 2))
-        else:
-            b.append(arrow(xa + bw / 2, ya + bh, xb + bw / 2, yb - 2))
-    for i, (name, l1, l2) in enumerate(STEPS):
-        x, y = pos[i]
-        stroke = t["teal"] if i in (4, 5) else t["ink"]
-        sw = 2 if i in (4, 5) else 1.2
-        b.append(f'<rect x="{x}" y="{y}" width="{bw}" height="{bh}" fill="{t["paper"]}" stroke="{stroke}" stroke-width="{sw}"/>')
-        b.append(f'<text x="{x+16}" y="{y+40}" font-size="30" font-weight="700" fill="{t["amber"]}">{i+1}</text>')
-        b.append(f'<text x="{x+48}" y="{y+38}" font-size="21" font-weight="700" fill="{t["ink"]}">{name}</text>')
-        b.append(f'<line x1="{x+16}" y1="{y+54}" x2="{x+bw-16}" y2="{y+54}" stroke="{t["grid2"]}" stroke-width="1"/>')
-        b.append(f'<text x="{x+16}" y="{y+80}" font-size="15.5" fill="{t["soft"]}">{l1}</text>')
-        b.append(f'<text x="{x+16}" y="{y+101}" font-size="15.5" fill="{t["soft"]}">{l2}</text>')
-    return svg(W, H, "\n".join(b), "PARADIGMA pipeline: eight steps from mapping the field to the report")
+def pipeline():
+    W, H = 1200, 330
+    b = [f'<rect width="{W}" height="{H}" rx="20" fill="{C["blush"]}"/>']
+    cw, ch, gx, gy, x0, y0 = 264, 122, 24, 22, 36, 31
+    for i, (name, desc) in enumerate(STEPS):
+        r, c = divmod(i, 4)
+        x, y = x0 + c * (cw + gx), y0 + r * (ch + gy)
+        hl = i in (4, 5)
+        b.append(f'<rect x="{x}" y="{y}" width="{cw}" height="{ch}" rx="12" fill="{C["petal"] if hl else C["canvas"]}" stroke="{C["rose"]}"/>')
+        b.append(f'<circle cx="{x+36}" cy="{y+38}" r="15" fill="{C["deep"] if hl else C["petal"]}"/>')
+        b.append(t(x + 36, y + 43.5, str(i + 1), 15, C["canvas"] if hl else C["deep"], 600, "middle"))
+        b.append(t(x + 22, y + 84, name, 19, C["ink"], 600))
+        b.append(t(x + 22, y + 106, desc, 14, C["muted"]))
+    return svg(W, H, "\n".join(b), "PARADIGMA in eight steps, from mapping the field to the report")
 
 
 # -------------------------------------------------------------- gap matrix
-def gap(t):
-    W, H = 900, 560
-    b = [f'<rect width="{W}" height="{H}" fill="{t["paper"]}"/>']
-    X0, Y0, X1, Y1 = 110, 40, 860, 470
-    MX, MY = (X0 + X1) / 2, (Y0 + Y1) / 2
-    b.append(grid(X0, Y0, X1, Y1, 15, t["grid"], t["grid"], t["grid2"], every=5))
-    b.append(f'<rect x="{X0}" y="{Y0}" width="{MX-X0}" height="{MY-Y0}" fill="{t["tealfill"]}" opacity="0.13"/>')
-    b.append(f'<rect x="{X0}" y="{Y0}" width="{X1-X0}" height="{Y1-Y0}" fill="none" stroke="{t["ink"]}" stroke-width="1.3"/>')
-    b.append(f'<line x1="{MX}" y1="{Y0}" x2="{MX}" y2="{Y1}" stroke="{t["ink"]}" stroke-width="1"/>')
-    b.append(f'<line x1="{X0}" y1="{MY}" x2="{X1}" y2="{MY}" stroke="{t["ink"]}" stroke-width="1"/>')
-    q = [("White space", "fell far, few are building", X0 + 18, Y0 + 32, t["teal"]),
-         ("Crowded", "fell far, many are building", MX + 18, Y0 + 32, t["ink"]),
-         ("Dormant", "little change, little activity", X0 + 18, MY + 32, t["soft"]),
-         ("Hype risk", "little change, many are building", MX + 18, MY + 32, t["amber"])]
-    for name, sub, x, y, c in q:
-        b.append(f'<text x="{x}" y="{y}" font-size="24" font-weight="700" fill="{c}">{name}</text>')
-        b.append(f'<text x="{x}" y="{y+22}" font-size="15" fill="{t["soft"]}">{sub}</text>')
-    # white-space candidates sorted by the why-not check
-    pts = [(170, 150, "untried", "solid"), (235, 205, "tried too early", "ring"), (290, 120, "blocked: watch list", "amber")]
-    for x, y, lab, kind in pts:
-        if kind == "solid":
-            b.append(f'<circle cx="{x}" cy="{y}" r="8" fill="{t["teal"]}"/>')
-        elif kind == "ring":
-            b.append(f'<circle cx="{x}" cy="{y}" r="7.5" fill="{t["paper"]}" stroke="{t["teal"]}" stroke-width="2.6"/>')
+def gap():
+    W, H = 900, 600
+    b = [f'<rect width="{W}" height="{H}" rx="20" fill="{C["blush"]}"/>']
+    X0, Y0, cw, ch, g = 96, 40, 382, 232, 14
+    cells = [
+        (0, 0, "White space", "Fell far, few are building", C["petal"], C["deep"]),
+        (1, 0, "Crowded", "Fell far, many are building", C["canvas"], C["ink"]),
+        (0, 1, "Dormant", "Little change, little activity", C["canvas"], C["muted"]),
+        (1, 1, "Hype risk", "Little change, many are building", C["canvas"], C["ink"]),
+    ]
+    for cx, cy, name, sub, fill, col in cells:
+        x, y = X0 + cx * (cw + g), Y0 + cy * (ch + g)
+        b.append(f'<rect x="{x}" y="{y}" width="{cw}" height="{ch}" rx="14" fill="{fill}" stroke="{C["rose"]}"/>')
+        b.append(t(x + 24, y + 42, name, 22, col, 600))
+        b.append(t(x + 24, y + 66, sub, 14, C["muted"]))
+    # white-space items, sorted by the why-not check
+    items = [(150, 150, "untried", "fill"), (150, 186, "tried too early", "ring"), (150, 222, "blocked: watch list", "dash")]
+    for x, y, lab, k in items:
+        if k == "fill":
+            b.append(f'<circle cx="{x}" cy="{y}" r="7" fill="{C["deep"]}"/>')
+        elif k == "ring":
+            b.append(f'<circle cx="{x}" cy="{y}" r="6" fill="{C["canvas"]}" stroke="{C["deep"]}" stroke-width="2.5"/>')
         else:
-            b.append(f'<rect x="{x-7}" y="{y-7}" width="14" height="14" fill="{t["paper"]}" stroke="{t["amber"]}" stroke-width="2.4" transform="rotate(45 {x} {y})"/>')
-        b.append(f'<text x="{x+15}" y="{y+5}" font-size="15" fill="{t["ink"]}">{lab}</text>')
-    for x, y in [(560, 130), (640, 175), (720, 115), (790, 200), (610, 225)]:
-        b.append(f'<circle cx="{x}" cy="{y}" r="6" fill="{t["soft"]}" opacity="0.7"/>')
-    for x, y in [(640, 360), (760, 400), (700, 330)]:
-        b.append(f'<circle cx="{x}" cy="{y}" r="6" fill="none" stroke="{t["amber"]}" stroke-width="2"/>')
-    for x, y in [(190, 370), (300, 410), (380, 345)]:
-        b.append(f'<circle cx="{x}" cy="{y}" r="5" fill="{t["soft"]}" opacity="0.35"/>')
-    b.append(f'<text x="{(X0+X1)/2}" y="{Y1+40}" font-size="17" fill="{t["ink"]}" text-anchor="middle">How many companies are building on it  (funding, patents, launches)</text>')
-    b.append(f'<text x="58" y="{(Y0+Y1)/2}" font-size="17" fill="{t["ink"]}" text-anchor="middle" transform="rotate(-90 58 {(Y0+Y1)/2})">How much the constraint fell</text>')
-    b.append(f'<text x="{X0}" y="{Y1+40}" font-size="13" fill="{t["soft"]}">fewer</text>')
-    b.append(f'<text x="{X1}" y="{Y1+40}" font-size="13" fill="{t["soft"]}" text-anchor="end">more</text>')
-    return svg(W, H, "\n".join(b), "PARADIGMA gap matrix: how much each constraint fell against how many companies build on it")
+            b.append(f'<circle cx="{x}" cy="{y}" r="6" fill="{C["canvas"]}" stroke="{C["pink"]}" stroke-width="2.5" stroke-dasharray="3 2.5"/>')
+        b.append(t(x + 16, y + 5, lab, 15, C["body"]))
+    for x, y in [(560, 150), (640, 190), (720, 140), (790, 210), (600, 230)]:
+        b.append(f'<circle cx="{x}" cy="{y}" r="6" fill="{C["rose"]}"/>')
+    for x, y in [(620, 400), (720, 440), (780, 380)]:
+        b.append(f'<circle cx="{x}" cy="{y}" r="6" fill="{C["canvas"]}" stroke="{C["pink"]}" stroke-width="2"/>')
+    for x, y in [(190, 410), (300, 440), (380, 390)]:
+        b.append(f'<circle cx="{x}" cy="{y}" r="5" fill="{C["petal"]}"/>')
+    b.append(t(X0 + cw + g / 2, H - 46, "How many are building on it  →", 15, C["body"], 500, "middle"))
+    b.append(t(56, Y0 + ch + g / 2, "How far the constraint fell  →", 15, C["body"], 500, "middle",
+               f'transform="rotate(-90 56 {Y0 + ch + g / 2})"'))
+    return svg(W, H, "\n".join(b), "Gap matrix: how far each constraint fell against how many companies build on it")
 
 
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
+    for f in os.listdir(OUT):
+        if f.endswith(".svg"):
+            os.remove(os.path.join(OUT, f))
     for name, fn in [("banner", banner), ("pipeline", pipeline), ("gap-matrix", gap)]:
-        for th, t in THEMES.items():
-            p = os.path.join(OUT, f"{name}-{th}.svg")
-            open(p, "w").write(fn(t))
-            print("wrote", os.path.relpath(p))
+        p = os.path.join(OUT, f"{name}.svg")
+        open(p, "w").write(fn())
+        print("wrote", os.path.relpath(p))

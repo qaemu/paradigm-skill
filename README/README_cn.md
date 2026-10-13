@@ -1,9 +1,6 @@
 <div align="center">
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="../assets/banner-dark.svg">
-  <img alt="PARADIGMA：找出那些已不再成立的约束，以及谁正在利用它们" src="../assets/banner-light.svg" width="100%">
-</picture>
+<img alt="PARADIGMA：梳理某个领域的约束在二十年间如何变化，找出刚刚变得可行的事物" src="../assets/banner.svg" width="100%">
 
 <br>
 
@@ -11,11 +8,11 @@
 
 [English](../README.md) | [Español](README_es.md) | **简体中文**
 
-[![版本](https://img.shields.io/badge/版本-0.1.0%20实验性-B97F00?style=flat-square&labelColor=1B2A38)](#局限)
-[![许可证: MIT](https://img.shields.io/badge/许可证-MIT-0B7F6F?style=flat-square&labelColor=1B2A38)](../LICENSE)
-[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-兼容-5B6B7A?style=flat-square&labelColor=1B2A38)](https://agentskills.io)
-[![Claude Code 插件](https://img.shields.io/badge/Claude%20Code-插件-5B6B7A?style=flat-square&labelColor=1B2A38)](#claude-code)
-[![Python](https://img.shields.io/badge/python-3.10%2B-5B6B7A?style=flat-square&labelColor=1B2A38)](../skills/paradigma/scripts/paradigma.py)
+[![版本](https://img.shields.io/badge/版本-0.1.0%20实验性-C9406B?style=flat-square&labelColor=111111)](#局限)
+[![许可证: MIT](https://img.shields.io/badge/许可证-MIT-C9406B?style=flat-square&labelColor=111111)](../LICENSE)
+[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-兼容-EE9AB3?style=flat-square&labelColor=111111)](https://agentskills.io)
+[![Claude Code 插件](https://img.shields.io/badge/Claude%20Code-插件-EE9AB3?style=flat-square&labelColor=111111)](#claude-code)
+[![Python](https://img.shields.io/badge/python-3.10%2B-EE9AB3?style=flat-square&labelColor=111111)](../skills/paradigma/scripts/paradigma.py)
 
 [快速开始](#快速开始) · [为什么关注约束](#为什么关注约束) · [工作原理](#工作原理) · [产出内容](#产出内容) · [安装](#安装) · [用法](#用法) · [模型选择](#选择哪个模型运行) · [计算方法](#计算方法) · [局限](#局限) · [常见问题](#常见问题)
 
@@ -55,10 +52,7 @@ npx skills add qaemu/paradigm-skill
 
 ## 工作原理
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="../assets/pipeline-dark.svg">
-  <img alt="八个步骤：梳理领域、价格曲线、非成本扫描、活动扫描、空白矩阵、“为什么没有”检查、独立核查、报告" src="../assets/pipeline-light.svg" width="100%">
-</picture>
+<img alt="八个步骤：梳理领域、价格曲线、非成本扫描、活动扫描、空白矩阵、“为什么没有”检查、独立核查、报告" src="../assets/pipeline.svg" width="100%">
 
 | 步骤 | 内容 |
 |---|---|
@@ -82,10 +76,7 @@ npx skills add qaemu/paradigm-skill
 ## 产出内容
 
 <div align="center">
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="../assets/gap-matrix-dark.svg">
-  <img alt="空白矩阵的四个象限：空白、拥挤、沉寂、炒作风险" src="../assets/gap-matrix-light.svg" width="78%">
-</picture>
+<img alt="空白矩阵的四个象限：空白、拥挤、沉寂、炒作风险" src="../assets/gap-matrix.svg" width="78%">
 <br>
 <sub>空白矩阵示意图。实际运行时会绘制你所选领域的约束。</sub>
 </div>
@@ -297,7 +288,7 @@ paradigm-skill/
 ├── dist/paradigma.zip       可直接上传到 Claude 应用的技能包（tools/package.sh）
 ├── tools/                   make_assets.py（README 插图）、package.sh（重新打包 ZIP）
 ├── README/                  README 的翻译版本
-└── assets/                  横幅、流程图和空白矩阵插图（浅色 + 深色）
+└── assets/                  横幅、流程图和空白矩阵插图
 ```
 
 ```bash

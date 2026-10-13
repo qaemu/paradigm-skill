@@ -1,9 +1,6 @@
 <div align="center">
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.svg">
-  <img alt="PARADIGMA: find the constraints that stopped being true, and who is building on them" src="assets/banner-light.svg" width="100%">
-</picture>
+<img alt="PARADIGMA: map how a field's constraints changed over two decades, and find what just became possible" src="assets/banner.svg" width="100%">
 
 <br>
 
@@ -11,11 +8,11 @@
 
 **English** | [Español](README/README_es.md) | [简体中文](README/README_cn.md)
 
-[![Version](https://img.shields.io/badge/version-0.1.0%20experimental-B97F00?style=flat-square&labelColor=1B2A38)](#limits)
-[![License: MIT](https://img.shields.io/badge/license-MIT-0B7F6F?style=flat-square&labelColor=1B2A38)](LICENSE)
-[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-compatible-5B6B7A?style=flat-square&labelColor=1B2A38)](https://agentskills.io)
-[![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-5B6B7A?style=flat-square&labelColor=1B2A38)](#claude-code)
-[![Python](https://img.shields.io/badge/python-3.10%2B-5B6B7A?style=flat-square&labelColor=1B2A38)](skills/paradigma/scripts/paradigma.py)
+[![Version](https://img.shields.io/badge/version-0.1.0%20experimental-C9406B?style=flat-square&labelColor=111111)](#limits)
+[![License: MIT](https://img.shields.io/badge/license-MIT-C9406B?style=flat-square&labelColor=111111)](LICENSE)
+[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-compatible-EE9AB3?style=flat-square&labelColor=111111)](https://agentskills.io)
+[![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-EE9AB3?style=flat-square&labelColor=111111)](#claude-code)
+[![Python](https://img.shields.io/badge/python-3.10%2B-EE9AB3?style=flat-square&labelColor=111111)](skills/paradigma/scripts/paradigma.py)
 
 [Quick start](#quick-start) · [Why](#why-constraints) · [How it works](#how-it-works) · [What you get](#what-you-get) · [Install](#install) · [Usage](#usage) · [Models](#which-model-to-run-it-on) · [The math](#the-math) · [Limits](#limits) · [FAQ](#faq)
 
@@ -55,10 +52,7 @@ Those changes are usually public, so tracking them alone gives you no edge. The 
 
 ## How it works
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/pipeline-dark.svg">
-  <img alt="Eight steps: map the field, price curves, non-cost sweep, activity scan, gap matrix, why-not check, independent check, report" src="assets/pipeline-light.svg" width="100%">
-</picture>
+<img alt="Eight steps: map the field, price curves, non-cost sweep, activity scan, gap matrix, why-not check, independent check, report" src="assets/pipeline.svg" width="100%">
 
 | Step | What happens |
 |---|---|
@@ -82,10 +76,7 @@ Those changes are usually public, so tracking them alone gives you no edge. The 
 ## What you get
 
 <div align="center">
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/gap-matrix-dark.svg">
-  <img alt="Gap matrix with four quadrants: white space, crowded, dormant, hype risk" src="assets/gap-matrix-light.svg" width="78%">
-</picture>
+<img alt="Gap matrix with four quadrants: white space, crowded, dormant, hype risk" src="assets/gap-matrix.svg" width="78%">
 <br>
 <sub>Illustration of the gap matrix. A real run plots your field's constraints.</sub>
 </div>
@@ -297,7 +288,7 @@ paradigm-skill/
 ├── dist/paradigma.zip       ready-to-upload skill for Claude apps (tools/package.sh)
 ├── tools/                   make_assets.py (README artwork), package.sh (rebuilds the ZIP)
 ├── README/                  translations of this page
-└── assets/                  banner, pipeline and gap-matrix art (light + dark)
+└── assets/                  banner, pipeline and gap-matrix art
 ```
 
 ```bash
