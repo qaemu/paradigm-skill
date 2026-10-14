@@ -164,7 +164,7 @@ OpenCode 也会读取 `~/.claude/skills/`，因此在 Claude Code 中安装的�
 |---|---|---|
 | `领域` | 必填 | 如果范围很广，比如*硬件*或*医疗*，PARADIGMA 会先建议 3–4 个更具体的子领域。范围越具体，结果越好 |
 | `地区` | 全球 | 会标注数据偏重美国或欧盟的部分 |
-| `年数` | `5` | 向前回看多少年，截至上一个完整年份。可写 `10`、`10y` 或 `years=10`（5 到 50），也可写区间如 `2010-2025`。默认值反映近期变化。大多数硬件领域用 10–20 年才能看到完整曲线，变化慢的基础设施用 30 年以上。窗口越短，每条曲线的数据越少，评级越低，更早下降的约束会显得没有变化 |
+| `年数` | `10` | 向前回看多少年，截至上一个完整年份。可写 `10`、`10y` 或 `years=10`（5 到 50），也可写区间如 `2010-2025`。默认值覆盖近期变化，同时有足够的数据点获得较好的评级。变化很快的领域可用 5 年快速查看，成本下降缓慢的硬件用 20 年，变化慢的基础设施用 30 年以上。窗口越短，每条曲线的数据越少，评级越低，更早下降的约束会显得没有变化 |
 | 深度 | `standard` | `standard` 覆盖 12–25 项约束。`deep` 最多覆盖 40 项，曲线数据更密集，并对每个候选项进行“为什么没有”检查 |
 
 ```text
@@ -234,10 +234,10 @@ OpenCode 也会读取 `~/.claude/skills/`，因此在 Claude Code 中安装的�
 ```bash
 cd skills/paradigma/scripts
 python3 paradigma.py cpi                  # 从 FRED 获取美国 CPI 年均值
-python3 paradigma.py curves --start 2021 --end 2025 --plots   # points.csv -> curves.csv, periods.csv, plots/
+python3 paradigma.py curves --start 2016 --end 2025 --plots   # points.csv -> curves.csv, periods.csv, plots/
 python3 paradigma.py papers --start 2020 --end 2025   # OpenAlex 论文数量
 python3 paradigma.py gap --plots          # 曲线 + 活动 -> gap_matrix.csv, plots/gap_matrix.png
-python3 paradigma.py workbook --field "…" --start 2021 --end 2025   # 所有表格 -> 易读的 .xlsx
+python3 paradigma.py workbook --field "…" --start 2016 --end 2025   # 所有表格 -> 易读的 .xlsx
 ```
 
 CSV 结构说明见 [`SKILL.md` 附录 B（Appendix B）](../skills/paradigma/SKILL.md#appendix-b-csv-schemas)。

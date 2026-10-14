@@ -1,7 +1,7 @@
 ---
 name: paradigma
 license: MIT
-description: PARADIGMA maps which constraints (costs, performance, laws, patents, skills, norms, supply) in a given field fell, are falling or are tightening over a chosen number of years (5 by default), who is building on each, and where the open gaps are. Use when the user calls PARADIGMA or asks for a constraint-shift / paradigm panorama of a field.
+description: PARADIGMA maps which constraints (costs, performance, laws, patents, skills, norms, supply) in a given field fell, are falling or are tightening over a chosen number of years (10 by default), who is building on each, and where the open gaps are. Use when the user calls PARADIGMA or asks for a constraint-shift / paradigm panorama of a field.
 ---
 
 # PARADIGMA: constraint-shift panorama of a field
@@ -10,7 +10,7 @@ description: PARADIGMA maps which constraints (costs, performance, laws, patents
 
 **Invocation:** `/paradigma <field> [region] [years] [standard|deep]`. The field is required and comes from the invocation. Everything else is optional and can come in any order after the field.
 
-- **`years`**: how many years back the analysis looks. Accept a bare number (`10`), `10y`, `10 years` or `years=10`. Default **5**. Allowed range **5 to 50**; outside it, clamp and say so. An explicit range such as `2010-2025` is also accepted and sets both ends.
+- **`years`**: how many years back the analysis looks. Accept a bare number (`10`), `10y`, `10 years` or `years=10`. Default **10**. Allowed range **5 to 50**; outside it, clamp and say so. An explicit range such as `2010-2025` is also accepted and sets both ends.
 - Examples: `/paradigma "solar inverters"`, `/paradigma "dental aligners" EU 10`, `/paradigma "cargo drones" global 15y deep`, `/paradigma "industrial robots" 2000-2025`.
 
 ## Non-negotiable rules
@@ -21,14 +21,14 @@ description: PARADIGMA maps which constraints (costs, performance, laws, patents
 4. **Every open-gap candidate gets a "why not" check** before it's reported as open gap.
 5. **Verify independently before delivery.** An agent that did not do the research checks the numbers and claims.
 6. **Be honest about confidence.** Show curve grades (A/B/C/D) and data gaps, and label what is consensus (widely covered) separately from what is non-obvious.
-7. **Anchor dates to today.** Get today's date first (time tool or `date`). The analysis window is the `years` ending at the last full calendar year: `END` = last full calendar year, `START` = `END − years + 1`. With the default of 5 and today in 2026, that is 2021–2025. Use `START` and `END` everywhere a window is mentioned below, and print them at the top of the report.
+7. **Anchor dates to today.** Get today's date first (time tool or `date`). The analysis window is the `years` ending at the last full calendar year: `END` = last full calendar year, `START` = `END − years + 1`. With the default of 10 and today in 2026, that is 2016–2025. Use `START` and `END` everywhere a window is mentioned below, and print them at the top of the report.
 
 ## Inputs and scope
 
 - **Field (required).** If it's missing, ask for it in one question.
 - **Breadth check.** If the field is broad (for example "mechanics," "hardware," "health," "energy"), ask once with AskUserQuestion. Offer 3–4 concrete subfields plus "Run broad anyway (shallower)." If nobody answers (unattended run), run broad, cap it at 25 constraints, and say so at the top of the report.
 - **Region:** default global. Note where the data is US- or EU-centric.
-- **Window (`years`):** see Invocation. The default of 5 shows what changed recently. Use 10–20 to see the full curve of most hardware fields, and 30–50 for slow infrastructure. Short windows have consequences: a constraint that fell before `START` looks unchanged, so say in the report when a longer window would show an earlier fall; with fewer than 8 yearly periods a curve cannot reach grade A unless the data is quarterly, and with 7 years or fewer the trend shape (recent 5 years vs the whole window) is not meaningful, so report it as n/a. Long windows reach back before most online price data; expect more gaps before about 2000.
+- **Window (`years`):** see Invocation. The default of 10 covers recent shifts and still allows grade A curves and a trend shape. Use 5 for a quick look at very fast fields, 20 for hardware whose costs fall slowly, and 30–50 for slow infrastructure. Short windows have consequences: a constraint that fell before `START` looks unchanged, so say in the report when a longer window would show an earlier fall; with fewer than 8 yearly periods a curve cannot reach grade A unless the data is quarterly, and with 7 years or fewer the trend shape (recent 5 years vs the whole window) is not meaningful, so report it as n/a. Long windows reach back before most online price data; expect more gaps before about 2000.
 - **Depth:** `standard` covers 12–25 constraints. `deep` covers up to 40, with more points per curve and why-not checks on all candidates.
 
 ## Setup

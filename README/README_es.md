@@ -164,7 +164,7 @@ OpenCode también lee `~/.claude/skills/`, así que una instalación de Claude C
 |---|---|---|
 | `campo` | obligatorio | Si es muy amplio, como *hardware* o *salud*, PARADIGMA primero sugiere 3–4 subcampos más acotados. Los campos acotados dan resultados mucho mejores |
 | `región` | global | Indica dónde los datos están centrados en EE. UU. o la UE |
-| `años` | `5` | Cuántos años hacia atrás mirar, hasta el último año completo. Escribí `10`, `10y` o `years=10` (de 5 a 50), o un rango como `2010-2025`. Por defecto muestra lo que cambió hace poco. Usá 10–20 para ver la curva completa en la mayoría del hardware y 30+ para infraestructura lenta. Con ventanas cortas cada curva tiene menos datos, así que las notas bajan, y lo que cayó antes parece sin cambios |
+| `años` | `10` | Cuántos años hacia atrás mirar, hasta el último año completo. Escribí `10`, `10y` o `years=10` (de 5 a 50), o un rango como `2010-2025`. Por defecto cubre los cambios recientes con datos suficientes para buenas notas. Usá 5 para una mirada rápida a campos veloces, 20 para hardware cuyos costos bajan lento y 30+ para infraestructura lenta. Con ventanas cortas cada curva tiene menos datos, así que las notas bajan, y lo que cayó antes parece sin cambios |
 | profundidad | `standard` | `standard` cubre 12–25 restricciones. `deep` cubre hasta 40, con curvas más densas y chequeo de por qué no en cada candidato |
 
 ```text
@@ -234,10 +234,10 @@ Estos puntajes son relativos. Ordenan las restricciones de un campo entre sí, n
 ```bash
 cd skills/paradigma/scripts
 python3 paradigma.py cpi                  # promedios anuales del IPC de EE. UU. desde FRED
-python3 paradigma.py curves --start 2021 --end 2025 --plots   # points.csv -> curves.csv, periods.csv, plots/
+python3 paradigma.py curves --start 2016 --end 2025 --plots   # points.csv -> curves.csv, periods.csv, plots/
 python3 paradigma.py papers --start 2020 --end 2025   # conteo de papers en OpenAlex
 python3 paradigma.py gap --plots          # curvas + actividad -> gap_matrix.csv, plots/gap_matrix.png
-python3 paradigma.py workbook --field "…" --start 2021 --end 2025   # todas las tablas -> .xlsx legible
+python3 paradigma.py workbook --field "…" --start 2016 --end 2025   # todas las tablas -> .xlsx legible
 ```
 
 Los esquemas de los CSV están en [`SKILL.md`, Appendix B](../skills/paradigma/SKILL.md#appendix-b-csv-schemas).
