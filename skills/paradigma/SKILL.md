@@ -1,12 +1,12 @@
 ---
 name: paradigma
 license: MIT
-description: PARADIGMA maps which constraints (costs, performance, laws, patents, skills, norms, supply) in a given field fell, are falling or are tightening over a chosen number of years (20 by default), who is building on each, and where the white space is. Use when the user calls PARADIGMA or asks for a constraint-shift / paradigm panorama of a field.
+description: PARADIGMA maps which constraints (costs, performance, laws, patents, skills, norms, supply) in a given field fell, are falling or are tightening over a chosen number of years (20 by default), who is building on each, and where the open gaps are. Use when the user calls PARADIGMA or asks for a constraint-shift / paradigm panorama of a field.
 ---
 
 # PARADIGMA: constraint-shift panorama of a field
 
-**Goal:** give the user a clear, sourced panorama of a field. It covers which constraints fell, are falling or are tightening; who is building on each one; and where constraints fell but few people are building (white space). It is a map for deciding where to act. It is not idea generation and not a list of workarounds.
+**Goal:** give the user a clear, sourced panorama of a field. It covers which constraints fell, are falling or are tightening; who is building on each one; and where constraints fell but few people are building (open gap). It is a map for deciding where to act. It is not idea generation and not a list of workarounds.
 
 **Invocation:** `/paradigma <field> [region] [years] [standard|deep]`. The field is required and comes from the invocation. Everything else is optional and can come in any order after the field.
 
@@ -18,7 +18,7 @@ description: PARADIGMA maps which constraints (costs, performance, laws, patents
 1. **No source, no number.** Every data point, funding figure, date and company claim has a source URL. Never fill a cell from memory or estimate a missing value. Report missing data as missing.
 2. **All curve math runs in the script** (Appendix A), never in prose. Use period medians and a robust trend (Theil–Sen on log scale). Never report an endpoint-to-endpoint percentage as a trend.
 3. **Mark every company's status** as `announced` | `deployed` | `paying`, with evidence. A press release or a funding round is not traction.
-4. **Every white-space candidate gets a "why not" check** before it's reported as white space.
+4. **Every open-gap candidate gets a "why not" check** before it's reported as open gap.
 5. **Verify independently before delivery.** An agent that did not do the research checks the numbers and claims.
 6. **Be honest about confidence.** Show curve grades (A/B/C/D) and data gaps, and label what is consensus (widely covered) separately from what is non-obvious.
 7. **Anchor dates to today.** Get today's date first (time tool or `date`). The analysis window is the `years` ending at the last full calendar year: `END` = last full calendar year, `START` = `END − years + 1`. With the default of 20 and today in 2026, that is 2006–2025. Use `START` and `END` everywhere a window is mentioned below, and print them at the top of the report.
@@ -141,7 +141,7 @@ Use the **same query wording across all constraints** so the signals are compara
 
 Run:
 
-Before running it, set `direction` in `constraints.csv` for every constraint (`loosening`, `tightening`, `mixed` or `pressure`), and fill `exclude_reason` for any constraint that should stay off the chart (for example "price data not obtainable" or "curve withdrawn after review"). Only loosening constraints compete for white space. The others are listed under the chart with their reason, and show as `NOT PLACED` in `gap_matrix.csv`.
+Before running it, set `direction` in `constraints.csv` for every constraint (`loosening`, `tightening`, `mixed` or `pressure`), and fill `exclude_reason` for any constraint that should stay off the chart (for example "price data not obtainable" or "curve withdrawn after review"). Only loosening constraints compete for open gap. The others are listed under the chart with their reason, and show as `NOT PLACED` in `gap_matrix.csv`.
 
 ```
 python3 paradigma.py gap --plots --title "Gap matrix: <field>, <START>–<END>"
@@ -149,14 +149,14 @@ python3 paradigma.py gap --plots --title "Gap matrix: <field>, <START>–<END>"
 
 The script assigns each placed constraint to a quadrant:
 
-- **WHITE SPACE:** the constraint fell and few companies are building on it.
+- **OPEN GAP:** the constraint fell and few companies are building on it.
 - **CROWDED:** it fell and many companies are building on it.
 - **HYPE RISK:** little has changed, but many companies are building anyway.
 - **DORMANT:** little change and little activity.
 
 A high `research_to_commerce` value means the research is ahead of the companies. That's often the strongest signal.
 
-**Why-not check.** Run it on every WHITE SPACE item and on the top 5 by `gap_score`.
+**Why-not check.** Run it on every OPEN GAP item and on the top 5 by `gap_score`.
 
 1. Search for failed attempts: Failory, CB Insights post-mortems, "<topic> startup shut down," "<topic> failed," "<topic> pivot."
 2. Search for blockers that remain: certification, liability, distribution, unit economics, customer behavior, or another constraint still in place.
@@ -167,7 +167,7 @@ A high `research_to_commerce` value means the research is ahead of the companies
 
    - **N/A-CROWDED:** the check found many serious builders the scan missed. Say who.
 
-Only UNTRIED and TRIED TOO EARLY are presented as white space. BLOCKED items go to a **watch list** together with the blocker to monitor. Flag HYPE RISK items explicitly.
+Only UNTRIED and TRIED TOO EARLY are presented as open gap. BLOCKED items go to a **watch list** together with the blocker to monitor. Flag HYPE RISK items explicitly.
 
 After writing `whynot.csv`, run `gap --plots` again: the chart colours each dot by its why-not result.
 
@@ -193,7 +193,7 @@ If no Agent tool is available, do this as a separate pass yourself and state in 
 1. **Panorama** (one page): field, region, window (`START–END`, `years`), date.
    - Top constraints that fell, with fold change and grade.
    - Top tightening constraints.
-   - White space (UNTRIED and TRIED TOO EARLY).
+   - Open gap (UNTRIED and TRIED TOO EARLY).
    - Crowded zones.
    - Hype risks.
    - **Dated changes coming in the next 1–5 years:** laws taking effect, patents expiring.
@@ -223,7 +223,7 @@ python3 paradigma.py workbook --field "<field>" --region "<region>" --start <STA
 
 It writes `paradigma_<field>.xlsx` for a reader with no background: a **Start here** sheet (what the run is, how to read it in 5 minutes, a glossary, a list of sheets), then **Key findings**, then every table with plain-language headers, a full cell grid, a dark header row with white text, zebra rows, colour-coded labels with dark text on light fills, frozen headers, filters and clickable source links. Sheets whose CSV is missing say so instead of breaking. Do not build the workbook by hand. If a spreadsheet artifact type is listed and the user wants it there, load the same tables into it in the same order.
 
-**3. Final reply:** 3–5 lines covering the biggest shifts, the top white spaces, the main confidence caveat, and the deliverables.
+**3. Final reply:** 3–5 lines covering the biggest shifts, the top open gaps, the main confidence caveat, and the deliverables.
 
 ## Interpretation rules for the report
 

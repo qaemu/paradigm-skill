@@ -2,34 +2,31 @@
 <title>Gap matrix: how far each constraint fell against how many companies build on it</title>
 <rect width="900" height="600" rx="20" fill="#FFF6F8"/>
 <rect x="96" y="40" width="382" height="232" rx="14" fill="#FDE8EE" stroke="#F7CFDB"/>
-<text x="120" y="82" font-size="22" font-weight="600" fill="#C9406B" text-anchor="start" >White space</text>
-<text x="120" y="106" font-size="14" font-weight="400" fill="#7A7A85" text-anchor="start" >Fell far, few are building</text>
+<text x="120" y="82" font-size="22" font-weight="600" fill="#C9406B" text-anchor="start" >Open gap</text>
+<text x="120" y="106" font-size="14" font-weight="400" fill="#7A7A85" text-anchor="start" >Dropped a lot · few use it yet</text>
 <rect x="492" y="40" width="382" height="232" rx="14" fill="#FFFFFF" stroke="#F7CFDB"/>
 <text x="516" y="82" font-size="22" font-weight="600" fill="#111111" text-anchor="start" >Crowded</text>
-<text x="516" y="106" font-size="14" font-weight="400" fill="#7A7A85" text-anchor="start" >Fell far, many are building</text>
+<text x="516" y="106" font-size="14" font-weight="400" fill="#7A7A85" text-anchor="start" >Dropped a lot · many already use it</text>
 <rect x="96" y="286" width="382" height="232" rx="14" fill="#FFFFFF" stroke="#F7CFDB"/>
 <text x="120" y="328" font-size="22" font-weight="600" fill="#7A7A85" text-anchor="start" >Dormant</text>
-<text x="120" y="352" font-size="14" font-weight="400" fill="#7A7A85" text-anchor="start" >Little change, little activity</text>
+<text x="120" y="352" font-size="14" font-weight="400" fill="#7A7A85" text-anchor="start" >Barely moved · little activity</text>
 <rect x="492" y="286" width="382" height="232" rx="14" fill="#FFFFFF" stroke="#F7CFDB"/>
 <text x="516" y="328" font-size="22" font-weight="600" fill="#111111" text-anchor="start" >Hype risk</text>
-<text x="516" y="352" font-size="14" font-weight="400" fill="#7A7A85" text-anchor="start" >Little change, many are building</text>
+<text x="516" y="352" font-size="14" font-weight="400" fill="#7A7A85" text-anchor="start" >Barely moved · many building anyway</text>
 <circle cx="150" cy="150" r="7" fill="#C9406B"/>
 <text x="166" y="155" font-size="15" font-weight="400" fill="#3D3D44" text-anchor="start" >untried</text>
 <circle cx="150" cy="186" r="6" fill="#FFFFFF" stroke="#C9406B" stroke-width="2.5"/>
 <text x="166" y="191" font-size="15" font-weight="400" fill="#3D3D44" text-anchor="start" >tried too early</text>
 <circle cx="150" cy="222" r="6" fill="#FFFFFF" stroke="#EE9AB3" stroke-width="2.5" stroke-dasharray="3 2.5"/>
 <text x="166" y="227" font-size="15" font-weight="400" fill="#3D3D44" text-anchor="start" >blocked: watch list</text>
-<circle cx="560" cy="150" r="6" fill="#F7CFDB"/>
-<circle cx="640" cy="190" r="6" fill="#F7CFDB"/>
-<circle cx="720" cy="140" r="6" fill="#F7CFDB"/>
-<circle cx="790" cy="210" r="6" fill="#F7CFDB"/>
-<circle cx="600" cy="230" r="6" fill="#F7CFDB"/>
-<circle cx="620" cy="400" r="6" fill="#FFFFFF" stroke="#EE9AB3" stroke-width="2"/>
-<circle cx="720" cy="440" r="6" fill="#FFFFFF" stroke="#EE9AB3" stroke-width="2"/>
-<circle cx="780" cy="380" r="6" fill="#FFFFFF" stroke="#EE9AB3" stroke-width="2"/>
-<circle cx="190" cy="410" r="5" fill="#FDE8EE"/>
-<circle cx="300" cy="440" r="5" fill="#FDE8EE"/>
-<circle cx="380" cy="390" r="5" fill="#FDE8EE"/>
+<text x="516" y="152" font-size="15" font-weight="400" fill="#3D3D44" text-anchor="start" >What most of the field already knows.</text>
+<text x="516" y="176" font-size="15" font-weight="400" fill="#3D3D44" text-anchor="start" >The report lists who is there</text>
+<text x="516" y="200" font-size="15" font-weight="400" fill="#3D3D44" text-anchor="start" >and how far each one got.</text>
+<text x="516" y="398" font-size="15" font-weight="400" fill="#3D3D44" text-anchor="start" >A warning sign: lots of activity</text>
+<text x="516" y="422" font-size="15" font-weight="400" fill="#3D3D44" text-anchor="start" >with no real change underneath.</text>
+<text x="516" y="446" font-size="15" font-weight="400" fill="#3D3D44" text-anchor="start" >Treat growth claims with caution.</text>
+<text x="120" y="398" font-size="15" font-weight="400" fill="#3D3D44" text-anchor="start" >Nothing moved and nobody is</text>
+<text x="120" y="422" font-size="15" font-weight="400" fill="#3D3D44" text-anchor="start" >building. Kept for reference.</text>
 <text x="485.0" y="554" font-size="15" font-weight="500" fill="#3D3D44" text-anchor="middle" >How many are building on it  →</text>
-<text x="56" y="279.0" font-size="15" font-weight="500" fill="#3D3D44" text-anchor="middle" transform="rotate(-90 56 279.0)">How far the constraint fell  →</text>
+<text x="56" y="279.0" font-size="15" font-weight="500" fill="#3D3D44" text-anchor="middle" transform="rotate(-90 56 279.0)">How far the constraint dropped  →</text>
 </svg>

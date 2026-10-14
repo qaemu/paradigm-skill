@@ -69,9 +69,7 @@ def banner():
     b.append(f'<rect x="{X}" y="{Y+4}" width="{CW}" height="{CH}" rx="16" fill="{C["rose"]}" opacity="0.45"/>')
     b.append(f'<rect x="{X}" y="{Y}" width="{CW}" height="{CH}" rx="16" fill="{C["canvas"]}" stroke="{C["rose"]}"/>')
     b.append(t(X + 28, Y + 44, "Industrial vibration sensor", 20, C["ink"], 600))
-    b.append(t(X + 28, Y + 68, "Cost per measurement channel, constant USD", 14, C["muted"]))
-    p, w = pill(X + CW - 128, Y + 26, "White space", C["petal"], C["deep"], 13, 12, 26, 600)
-    b.append(p)
+    b.append(t(X + 28, Y + 68, "Cost per measurement channel, USD", 14, C["muted"]))
 
     # mini log chart
     gx0, gy0, gx1, gy1 = X + 28, Y + 92, X + CW - 28, Y + 236
@@ -143,17 +141,17 @@ def gap():
     b = [f'<rect width="{W}" height="{H}" rx="20" fill="{C["blush"]}"/>']
     X0, Y0, cw, ch, g = 96, 40, 382, 232, 14
     cells = [
-        (0, 0, "White space", "Fell far, few are building", C["petal"], C["deep"]),
-        (1, 0, "Crowded", "Fell far, many are building", C["canvas"], C["ink"]),
-        (0, 1, "Dormant", "Little change, little activity", C["canvas"], C["muted"]),
-        (1, 1, "Hype risk", "Little change, many are building", C["canvas"], C["ink"]),
+        (0, 0, "Open gap", "Dropped a lot · few use it yet", C["petal"], C["deep"]),
+        (1, 0, "Crowded", "Dropped a lot · many already use it", C["canvas"], C["ink"]),
+        (0, 1, "Dormant", "Barely moved · little activity", C["canvas"], C["muted"]),
+        (1, 1, "Hype risk", "Barely moved · many building anyway", C["canvas"], C["ink"]),
     ]
     for cx, cy, name, sub, fill, col in cells:
         x, y = X0 + cx * (cw + g), Y0 + cy * (ch + g)
         b.append(f'<rect x="{x}" y="{y}" width="{cw}" height="{ch}" rx="14" fill="{fill}" stroke="{C["rose"]}"/>')
         b.append(t(x + 24, y + 42, name, 22, col, 600))
         b.append(t(x + 24, y + 66, sub, 14, C["muted"]))
-    # white-space items, sorted by the why-not check
+    # open-gap items, sorted by the why-not check
     items = [(150, 150, "untried", "fill"), (150, 186, "tried too early", "ring"), (150, 222, "blocked: watch list", "dash")]
     for x, y, lab, k in items:
         if k == "fill":
@@ -163,14 +161,18 @@ def gap():
         else:
             b.append(f'<circle cx="{x}" cy="{y}" r="6" fill="{C["canvas"]}" stroke="{C["pink"]}" stroke-width="2.5" stroke-dasharray="3 2.5"/>')
         b.append(t(x + 16, y + 5, lab, 15, C["body"]))
-    for x, y in [(560, 150), (640, 190), (720, 140), (790, 210), (600, 230)]:
-        b.append(f'<circle cx="{x}" cy="{y}" r="6" fill="{C["rose"]}"/>')
-    for x, y in [(620, 400), (720, 440), (780, 380)]:
-        b.append(f'<circle cx="{x}" cy="{y}" r="6" fill="{C["canvas"]}" stroke="{C["pink"]}" stroke-width="2"/>')
-    for x, y in [(190, 410), (300, 440), (380, 390)]:
-        b.append(f'<circle cx="{x}" cy="{y}" r="5" fill="{C["petal"]}"/>')
+    # plain-words reading of the other three quadrants, instead of decorative dots
+    notes = {
+        (1, 0): ["What most of the field already knows.", "The report lists who is there", "and how far each one got."],
+        (1, 1): ["A warning sign: lots of activity", "with no real change underneath.", "Treat growth claims with caution."],
+        (0, 1): ["Nothing moved and nobody is", "building. Kept for reference."],
+    }
+    for (cx, cy), lines in notes.items():
+        x, y = X0 + cx * (cw + g), Y0 + cy * (ch + g)
+        for i, line in enumerate(lines):
+            b.append(t(x + 24, y + 112 + i * 24, line, 15, C["body"]))
     b.append(t(X0 + cw + g / 2, H - 46, "How many are building on it  →", 15, C["body"], 500, "middle"))
-    b.append(t(56, Y0 + ch + g / 2, "How far the constraint fell  →", 15, C["body"], 500, "middle",
+    b.append(t(56, Y0 + ch + g / 2, "How far the constraint dropped  →", 15, C["body"], 500, "middle",
                f'transform="rotate(-90 56 {Y0 + ch + g / 2})"'))
     return svg(W, H, "\n".join(b), "Gap matrix: how far each constraint fell against how many companies build on it")
 

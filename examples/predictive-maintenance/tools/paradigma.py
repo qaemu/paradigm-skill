@@ -326,10 +326,10 @@ def plot_gap(df, cut, outdir, title, whynot):
     ax.axvline(cut, color=GRIDC, lw=1.3)
     ax.axhline(cut, color=GRIDC, lw=1.3)
     for t, (x, yt, ys, ha, col, sub) in {
-            "WHITE SPACE": (.02, .97, .925, "left", DEEP, "fell, few building"),
-            "CROWDED": (.98, .97, .925, "right", MUTED, "fell, many building"),
-            "DORMANT": (.02, .075, .03, "left", MUTED, "little change, few building"),
-            "HYPE RISK": (.98, .075, .03, "right", MUTED, "little change, many building")}.items():
+            "OPEN GAP": (.02, .97, .925, "left", DEEP, "dropped a lot, few use it yet"),
+            "CROWDED": (.98, .97, .925, "right", MUTED, "dropped a lot, many already use it"),
+            "DORMANT": (.02, .075, .03, "left", MUTED, "barely moved, little activity"),
+            "HYPE RISK": (.98, .075, .03, "right", MUTED, "barely moved, many building anyway")}.items():
         va = "top" if yt > .5 else "bottom"
         ax.text(x, yt, t, transform=ax.transAxes, ha=ha, va=va, fontsize=11, fontweight="bold", color=col)
         ax.text(x, ys, sub, transform=ax.transAxes, ha=ha, va=va, fontsize=8.5, color=MUTED)
@@ -345,7 +345,8 @@ def plot_gap(df, cut, outdir, title, whynot):
         ax.annotate(r.constraint_id, (r.px, r.py), xytext=(0, 12), textcoords="offset points",
                     ha="center", fontsize=10, fontweight="bold", color=INK)
     ax.set_xlim(-.06, 1.06)
-    ax.set_ylim(-.06, 1.12)
+    ax.set_ylim(-.06, 1.24)
+    ax.set_yticks([0, .2, .4, .6, .8, 1.0])
     ax.set_xlabel("How many are building on it  →\n(percentile of companies, funding and launches)", fontsize=10)
     ax.set_ylabel("How far the constraint fell  →\n(percentile)", fontsize=10)
     fig.text(0.07, 0.95, title, fontsize=14, fontweight="bold", color=INK)
@@ -395,7 +396,7 @@ def cmd_gap(a):
     cons_all = pd.read_csv(a.constraints, dtype=str).fillna("")
     act = pd.read_csv(a.activity)
     cv = pd.read_csv(a.curves) if os.path.exists(a.curves) else pd.DataFrame()
-    # Only loosening constraints compete for white space. Tightening, mixed or pressure constraints, and any row
+    # Only loosening constraints compete for open gap. Tightening, mixed or pressure constraints, and any row
     # with an exclude_reason, are kept out of the percentile ranking and listed under the chart instead.
     direction = cons_all.get("direction", pd.Series([""] * len(cons_all))).str.lower().str.strip()
     excl = cons_all.get("exclude_reason", pd.Series([""] * len(cons_all))).str.strip()
@@ -455,7 +456,7 @@ def cmd_gap(a):
     hi_a = df.activity_score >= a.cut
     df["quadrant"] = np.select(
         [hi_d & ~hi_a, hi_d & hi_a, ~hi_d & hi_a, ~hi_d & ~hi_a],
-        ["WHITE SPACE (fell, few builders)", "CROWDED (fell, many builders)",
+        ["OPEN GAP (fell, few builders)", "CROWDED (fell, many builders)",
          "HYPE RISK (little change, many builders)", "DORMANT"], default="UNSCORED")
     df.loc[df.drop_score.isna() | df.activity_score.isna(), "quadrant"] = "UNSCORED"
     df["gap_score"] = (df.drop_score * (1 - df.activity_score)).round(3)
@@ -523,14 +524,14 @@ GLOSSARY = [
     ("Grade A–D", "How much to trust a curve. A and B: enough points and sources. C: usable but weak. D: too little data, no trend computed."),
     ("Drop score", "0 to 1. How far a constraint fell compared with the others in this run."),
     ("Activity score", "0 to 1. How many companies, how much funding and how many launches build on it, compared with the others."),
-    ("White space", "Fell a lot, few building. A possible opening, but only after the why-not check."),
-    ("Crowded", "Fell a lot, many already building."),
-    ("Hype risk", "Little real change, but many building anyway."),
-    ("Dormant", "Little change and little activity."),
+    ("Open gap", "The constraint dropped a lot (cheaper, allowed, easier), but few companies use the change yet. A possible opening, but only after the why-not check."),
+    ("Crowded", "The constraint dropped a lot and many companies already use it. This is what most people in the field already know."),
+    ("Hype risk", "The constraint barely moved, yet many companies are building on it anyway. A warning sign: lots of activity with no real change underneath."),
+    ("Dormant", "The constraint barely moved and few are building on it."),
     ("Not placed", "Left off the gap matrix on purpose: it tightened, it is a pressure rather than an enabler, or it could not be measured."),
     ("Untried", "Nobody has seriously built on it yet."),
     ("Tried too early", "Someone failed before the constraint fell. Could work now."),
-    ("Blocked", "Something else still stands in the way. Goes to a watch list, not to white space."),
+    ("Blocked", "Something else still stands in the way. Goes to a watch list, not to open gap."),
     ("Company status", "announced = press release, funding round or pilot only. deployed = named customers or installations. paying = evidence of revenue."),
     ("Consensus", "yes = widely covered, well funded or a big incumbent. no = less known."),
     ("Verification", "Separate agents that did not collect the data re-opened each source. MATCH = the page shows it. MISMATCH = it does not (then corrected). UNVERIFIABLE = the page could not be opened."),
@@ -539,7 +540,7 @@ GLOSSARY = [
 TAGS = {  # value -> (fill, text colour); dark text on light fills keeps contrast high
     "MATCH": ("DCF2E1", "14532D"), "MISMATCH": ("FAD7DC", "7F1D1D"), "UNVERIFIABLE": ("FFF0BF", "6B3A0A"),
     "loosening": ("DCF2E1", "14532D"), "tightening": ("FAD7DC", "7F1D1D"), "mixed": ("FFF0BF", "6B3A0A"), "pressure": ("FFF0BF", "6B3A0A"),
-    "WHITE SPACE": ("FBE0E8", "8A1C3F"), "CROWDED": ("E3E8F0", "1F2937"), "HYPE RISK": ("FFF0BF", "6B3A0A"),
+    "OPEN GAP": ("FBE0E8", "8A1C3F"), "CROWDED": ("E3E8F0", "1F2937"), "HYPE RISK": ("FFF0BF", "6B3A0A"),
     "DORMANT": ("ECECEF", "374151"), "UNSCORED": ("FFFFFF", "4B4B55"), "NOT PLACED": ("FFFFFF", "4B4B55"),
     "UNTRIED": ("DBE7FE", "1E3A8A"), "BLOCKED": ("FAD7DC", "7F1D1D"), "N/A-CROWDED": ("E3E8F0", "1F2937"),
     "TRIED TOO EARLY": ("FFF0BF", "6B3A0A"),
@@ -556,7 +557,7 @@ def _tag(v):
     v = str(v).strip()
     if v in TAGS:
         return TAGS[v]
-    for k in ("WHITE SPACE", "CROWDED", "HYPE RISK", "DORMANT"):
+    for k in ("OPEN GAP", "CROWDED", "HYPE RISK", "DORMANT"):
         if v.startswith(k):
             return TAGS[k]
     if v[:1] in "ABCD" and v[1:2] in (" ", "("):
@@ -708,7 +709,7 @@ def cmd_workbook(a):
     put("What this is", style="section")
     put("PARADIGMA asks one question about a field: which of the things that limit it (prices, performance, laws, patents, skills, "
         "norms, supply) changed over the chosen years, who is already building on each change, and where something changed but "
-        "almost nobody is building yet. A limit that fell but nobody uses yet is a possible opening, called white space.", style="note")
+        "almost nobody is building yet. A limit that fell but nobody uses yet is a possible opening, called open gap.", style="note")
     state["row"] += 1
     put("Read it in 5 minutes", style="section")
     for x, y in [("1. Key findings", "The plain-language results. Start here."),
@@ -760,7 +761,7 @@ def cmd_workbook(a):
         ("constraint", "Constraint", 30, "text"), ("label", "Result", 14, "tag"), ("failed_attempts", "Who tried and what happened", 60, "text"),
         ("blockers", "What still blocks it", 60, "text"), ("blocker_trend", "Are the blockers falling?", 36, "text"),
         ("source_urls", "Source", 16, "url"), ("note", "Notes", 50, "text")],
-        intro="Only Untried and Tried too early count as white space. Blocked goes to a watch list.")
+        intro="Only Untried and Tried too early count as open gap. Blocked goes to a watch list.")
 
     c2 = cons.copy()
     if not c2.empty:

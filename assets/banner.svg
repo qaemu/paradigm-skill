@@ -16,8 +16,7 @@
 <rect x="668" y="60" width="548" height="328" rx="16" fill="#F7CFDB" opacity="0.45"/>
 <rect x="668" y="56" width="548" height="328" rx="16" fill="#FFFFFF" stroke="#F7CFDB"/>
 <text x="696" y="100" font-size="20" font-weight="600" fill="#111111" text-anchor="start" >Industrial vibration sensor</text>
-<text x="696" y="124" font-size="14" font-weight="400" fill="#7A7A85" text-anchor="start" >Cost per measurement channel, constant USD</text>
-<rect x="1088" y="82" width="104" height="26" rx="13.0" fill="#FDE8EE"/><text x="1140.04" y="99.68" font-size="13" font-weight="600" fill="#C9406B" text-anchor="middle" >White space</text>
+<text x="696" y="124" font-size="14" font-weight="400" fill="#7A7A85" text-anchor="start" >Cost per measurement channel, USD</text>
 <line x1="696" y1="148.0" x2="1188" y2="148.0" stroke="#FDE8EE" stroke-width="1"/>
 <line x1="696" y1="196.0" x2="1188" y2="196.0" stroke="#FDE8EE" stroke-width="1"/>
 <line x1="696" y1="244.0" x2="1188" y2="244.0" stroke="#FDE8EE" stroke-width="1"/>

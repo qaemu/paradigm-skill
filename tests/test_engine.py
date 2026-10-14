@@ -96,7 +96,7 @@ def main():
             "C2 trend ~ +30%/yr": 27 < cv.loc["C2", "annual_change_pct"] < 33,
             "C3 flat and graded C": cv.loc["C3", "class"] == "flat / unclear" and cv.loc["C3", "grade"] == "C",
             "2 bad rows rejected": len(rej) == 2,
-            "C4 (rule removed, few builders) lands in white space": gm.loc["C4", "quadrant"].startswith("WHITE SPACE"),
+            "C4 (rule removed, few builders) lands in open gap": gm.loc["C4", "quadrant"].startswith("OPEN GAP"),
             "C2 ranks above C1 on gap score": gm.loc["C2", "gap_score"] > gm.loc["C1", "gap_score"],
             "C1 lands in crowded": gm.loc["C1", "quadrant"].startswith("CROWDED"),
             "C5 with 3 periods still gets a trend": cv.loc["C5", "annual_change_pct"] < 0,

@@ -4,7 +4,7 @@
 
 <br>
 
-**An agent skill that maps how a field's constraints changed over the years you choose (20 by default),<br>to find where a new product, startup or line of research has just become possible.**
+**Agent skill that maps how a field's constraints changed over the years,<br>to find where a new product, startup or line of research has just become possible.**
 
 **English** | [Español](README/README_es.md) | [简体中文](README/README_cn.md)
 
@@ -12,7 +12,7 @@
 [![Python](https://img.shields.io/badge/python-3.10%2B-EE9AB3?style=flat-square&labelColor=111111)](skills/paradigma/scripts/paradigma.py)
 
 
-[Quick start](#quick-start) · [Why](#why-constraints) · [How it works](#how-it-works) · [What you get](#what-you-get) · [Install](#install) · [Usage](#usage) · [Models](#which-model-to-run-it-on) · [The math](#the-math) · [Limits](#limits) · [FAQ](#faq)
+[Quick start](#quick-start) · [How it works](#how-it-works) · [Install](#install) · [Usage](#usage) · [Limits](#limits) · [FAQ](#faq)
 
 </div>
 
@@ -24,13 +24,12 @@
 npx skills add qaemu/paradigma-skill
 ```
 
-Then, in your agent:
+Or add it to Claude Code by hand, from the plugin marketplace:
 
 ```text
-/paradigma industrial maintenance
+/plugin marketplace add qaemu/paradigma-skill
+/plugin install paradigma@paradigma
 ```
-
-About an hour later you have a sourced report and a data workbook: which constraints in industrial maintenance fell, which are tightening, who is building on each, and where the gaps are.
 
 > [!NOTE]
 > PARADIGMA gives you a map, not a prediction. It shows where constraints moved and who has noticed. Deciding when to act, and on what, is still your job.
@@ -63,18 +62,18 @@ Those changes are usually public, so tracking them alone gives you no edge. The 
 | **7. Independent check** | A fresh agent that did none of the research re-opens the sources and checks every value. The report states the pass rate. |
 | **8. Report** | A one-page panorama, one card per constraint, a timeline of dated changes, a company map, and a workbook with every data point and its link. |
 
-### Rules it doesn't break
+### Ground rules
 
-1. **No source, no number.** Data that can't be found is reported as missing, never estimated.
-2. **All math runs in the engine** ([`paradigma.py`](skills/paradigma/scripts/paradigma.py)), not in the model's prose.
-3. **A funding round is not traction.** Every company carries a status and the evidence behind it.
-4. **Nothing is called white space until the why-not check has run.**
-5. **Research is verified by an agent that didn't do it.**
+1. **Every number has a link.** If a number can't be found, the report says it's missing. It never guesses.
+2. **The math is done in code** ([`paradigma.py`](skills/paradigma/scripts/paradigma.py)), never estimated by the model.
+3. **Money raised is not proof of success.** Each company is marked *announced*, *deployed* or *paying*, with the evidence.
+4. **Nothing is called an open gap until the why-not check has run.**
+5. **A second agent, one that didn't do the research, checks the work.**
 
 ## What you get
 
 <div align="center">
-<img alt="Gap matrix with four quadrants: white space, crowded, dormant, hype risk" src="assets/gap-matrix.svg" width="78%">
+<img alt="Gap matrix with four quadrants: open gap, crowded, dormant, hype risk" src="assets/gap-matrix.svg" width="78%">
 <br>
 <sub>Illustration of the gap matrix. A real run plots your field's constraints.</sub>
 </div>
@@ -83,20 +82,20 @@ Those changes are usually public, so tracking them alone gives you no edge. The 
 
 | Quadrant | Meaning | What the report does with it |
 |---|---|---|
-| **White space** | The constraint fell far, and few are building on it | Runs the why-not check, then sorts each item into *untried*, *tried too early* (with the failed companies and dates) or *blocked* |
-| **Crowded** | It fell far, and many are building | Lists the companies and how far each got. This is the consensus picture |
-| **Hype risk** | Little changed, but many are building anyway | Flags it explicitly |
+| **Open gap** | The constraint dropped a lot (cheaper, allowed, easier), but few companies use the change yet | Runs the why-not check, then sorts each item into *untried*, *tried too early* (with the failed companies and dates) or *blocked* |
+| **Crowded** | The constraint dropped a lot, and many companies already use it | Lists who they are and how far each got. This is what most people in the field already know |
+| **Hype risk** | The constraint barely moved, yet many companies are building on it anyway | Marks it as a warning: lots of activity with no real change underneath, so treat growth claims with caution |
 | **Dormant** | Little change and little activity | Kept for reference |
 
 **Deliverables**
 
-- **Report.** The panorama first: biggest drops, tightening constraints, white space, crowded zones, hype risks, and dated changes in the next 1–5 years such as laws taking effect and patents expiring. Then one card per constraint with its curve, yearly change and margin of error, fold change, trend shape, grade, thresholds, companies and why-not label. It ends with method, confidence and sources.
+- **Report.** The panorama first: biggest drops, tightening constraints, open gaps, crowded zones, hype risks, and dated changes in the next 1–5 years such as laws taking effect and patents expiring. Then one card per constraint with its curve, yearly change and margin of error, fold change, trend shape, grade, thresholds, companies and why-not label. It ends with method, confidence and sources.
 - **Workbook.** `constraints`, `points`, `periods`, `curves`, `noncost`, `companies`, `activity`, `gap_matrix`, `whynot` and `verification`. Every row has its source link.
 - **Charts.** One log-scale curve per constraint, plus the gap matrix.
 
 ## Example
 
-A full run on **predictive maintenance for industrial machinery** (2006–2025) is in [`examples/predictive-maintenance`](examples/predictive-maintenance). It has the report, the gap matrix, an Excel workbook with a *Start here* sheet that explains every term, and every data point with its source. The run is honest about what it couldn't find: the why-not check withdrew both white spaces the engine flagged on the first pass.
+A full run on **predictive maintenance for industrial machinery** (2006–2025) is in [`examples/predictive-maintenance`](examples/predictive-maintenance). It has the report, the gap matrix, an Excel workbook with a *Start here* sheet that explains every term, and every data point with its source. The run is honest about what it couldn't find: the why-not check withdrew both open gaps the engine flagged on the first pass.
 
 ## Install
 
@@ -154,7 +153,6 @@ OpenCode also reads `~/.claude/skills/`, so a Claude Code install works there to
 | Web search and page fetching | Every number comes from a source |
 | Python 3.10+ with `pandas`, `numpy`, `matplotlib`, `openpyxl` (`scipy` optional) | The analysis engine, its charts and the Excel workbook |
 | Helper agents (optional) | Parallel research and the independent check. Without them it runs one step at a time and marks the check as self-checked |
-| `OPENALEX_API_KEY` (optional, [free](https://openalex.org)) | Paper counts once the shared free quota runs out. Without it those columns stay blank and the report says so |
 
 ## Usage
 

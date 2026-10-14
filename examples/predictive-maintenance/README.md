@@ -6,7 +6,7 @@
 
 ## 1. Panorama
 
-**Bottom line.** The cheap-hardware story for predictive maintenance (PdM) is mostly finished and has plateaued. What is left is institutional: who may read machine data, who controls it, whether buyers believe the ROI, and the lack of labeled failure data. No firm white space survived the why-not check. One candidate is still open with low confidence: third-party PdM services built on the EU Data Act's access right.
+**Bottom line.** The cheap-hardware story for predictive maintenance (PdM) is mostly finished and has plateaued. What is left is institutional: who may read machine data, who controls it, whether buyers believe the ROI, and the lack of labeled failure data. No firm open gap survived the why-not check. One candidate is still open with low confidence: third-party PdM services built on the EU Data Act's access right.
 
 ### What fell (measured)
 
@@ -22,7 +22,7 @@
 
 ### What the engine said fell, and the check withdrew
 
-- **C04 Entry thermal imagers.** The robust fit says −28%/yr and ~28× over 2011–2021. The why-not agent found this is a **one-time step when Seek entered in 2014** (about $0.006 per pixel against $0.146 for FLIR's C2 in 2015) and the per-pixel price has been roughly flat since. The curve mixes vendors and pixel counts. Grade lowered to C and C04 is excluded from the matrix. The scan also had only 1 company on it; a follow-up found at least 8 sellers, so the first-pass "white space" was a scan gap too.
+- **C04 Entry thermal imagers.** The robust fit says −28%/yr and ~28× over 2011–2021. The why-not agent found this is a **one-time step when Seek entered in 2014** (about $0.006 per pixel against $0.146 for FLIR's C2 in 2015) and the per-pixel price has been roughly flat since. The curve mixes vendors and pixel counts. Grade lowered to C and C04 is excluded from the matrix. The scan also had only 1 company on it; a follow-up found at least 8 sellers, so the first-pass "open gap" was a scan gap too.
 
 ### What could not be measured to standard (data gaps, not findings)
 
@@ -34,7 +34,7 @@
 - **Skills shortage is not visible in wages.** US industrial machinery mechanics (BLS 49-9041): employment 250,810 (2006) → 412,650 (2023), +65%, while the real median wage was flat (+0.2%/yr, CI +0.01 to +0.36) and fell about 9% from 2021 to 2023 in 2025 dollars. Shortage figures come from manufacturing-wide studies (Deloitte/Manufacturing Institute: 1.9M jobs unfilled by 2033). BLS data stops at May 2023 here.
 - **Compliance load is rising** for connected, AI-driven machines: EU Machinery Regulation (applies 2027-01-20), Cyber Resilience Act (reporting since 2026-09-11, full application 2027-12-11). The AI Act's high-risk dates were pushed back by the Digital Omnibus on AI.
 
-### White space after the why-not check
+### Open gap after the why-not check
 
 | Candidate | Label | Confidence | Why |
 |---|---|---|---|
@@ -70,7 +70,7 @@ Drop score is the percentile of how far each constraint fell (measured curve, or
 
 | Constraint | Drop | Activity | Papers 2023–25 (prior 3y) | Quadrant | Why-not |
 |---|---|---|---|---|---|
-| C19 OEM control of machine data and service contracts | 0.59 | 0.27 | 198 (68) | WHITE SPACE | BLOCKED |
+| C19 OEM control of machine data and service contracts | 0.59 | 0.27 | 198 (68) | OPEN GAP | BLOCKED |
 | C06 Edge AI accelerator price per TOPS | 1.00 | 0.67 | 998 (163) | CROWDED | N/A-CROWDED |
 | C11 Data interoperability standards (OPC UA, MQTT/Sparkplug, IO-Link, MTConnect) | 0.59 | 0.51 | 797 (131) | CROWDED | N/A-CROWDED |
 | C12 Condition-monitoring and prognostics standards (ISO 20816, 17359, 13381, 55000) | 0.23 | 0.19 | 116 (81) | DORMANT | BLOCKED |

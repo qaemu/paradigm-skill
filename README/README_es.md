@@ -4,7 +4,7 @@
 
 <br>
 
-**Una skill para agentes que mapea cómo cambiaron las restricciones de un campo en los años que elijas (20 por defecto),<br>para encontrar dónde acaba de volverse posible un nuevo producto, emprendimiento o línea de investigación.**
+**Skill para agentes que mapea cómo cambiaron las restricciones de un campo con los años,<br>para encontrar dónde acaba de volverse posible un nuevo producto, emprendimiento o línea de investigación.**
 
 [English](../README.md) | **Español** | [简体中文](README_cn.md)
 
@@ -12,7 +12,7 @@
 [![Python](https://img.shields.io/badge/python-3.10%2B-EE9AB3?style=flat-square&labelColor=111111)](../skills/paradigma/scripts/paradigma.py)
 
 
-[Inicio rápido](#inicio-rápido) · [Por qué](#por-qué-restricciones) · [Cómo funciona](#cómo-funciona) · [Qué obtenés](#qué-obtenés) · [Instalación](#instalación) · [Uso](#uso) · [Modelos](#con-qué-modelo-usarlo) · [La matemática](#la-matemática) · [Límites](#límites) · [Preguntas](#preguntas-frecuentes)
+[Inicio rápido](#inicio-rápido) · [Cómo funciona](#cómo-funciona) · [Instalación](#instalación) · [Uso](#uso) · [Límites](#límites) · [Preguntas](#preguntas-frecuentes)
 
 </div>
 
@@ -24,13 +24,12 @@
 npx skills add qaemu/paradigma-skill
 ```
 
-Después, en tu agente:
+O agregala a mano en Claude Code, desde el marketplace de plugins:
 
 ```text
-/paradigma mantenimiento industrial
+/plugin marketplace add qaemu/paradigma-skill
+/plugin install paradigma@paradigma
 ```
-
-Más o menos una hora después tenés un informe con fuentes y una planilla de datos: qué restricciones del mantenimiento industrial cayeron, cuáles se están endureciendo, quién construye sobre cada una y dónde están los huecos.
 
 > [!NOTE]
 > PARADIGMA te da un mapa, no una predicción. Muestra dónde se movieron las restricciones y quién lo notó. Decidir cuándo actuar, y sobre qué, sigue siendo trabajo tuyo.
@@ -63,18 +62,18 @@ Esos cambios suelen ser públicos, así que seguirlos por sí solo no da ventaja
 | **7. Verificación independiente** | Un agente nuevo, que no hizo la investigación, vuelve a abrir las fuentes y revisa cada valor. El informe indica la tasa de aprobación. |
 | **8. Informe** | Un panorama de una página, una ficha por restricción, una línea de tiempo de cambios con fecha, un mapa de empresas y una planilla con cada dato y su enlace. |
 
-### Reglas que no rompe
+### Reglas básicas
 
-1. **Sin fuente, no hay número.** Lo que no se encuentra se informa como faltante, nunca se estima.
-2. **Toda la matemática corre en el motor** ([`paradigma.py`](../skills/paradigma/scripts/paradigma.py)), no en la prosa del modelo.
-3. **Una ronda de inversión no es tracción.** Cada empresa lleva un estado y la evidencia que lo respalda.
-4. **Nada se llama espacio en blanco hasta que pasó el chequeo de por qué no.**
-5. **La investigación la verifica un agente que no la hizo.**
+1. **Cada número tiene un enlace.** Si un dato no se encuentra, el informe dice que falta. Nunca lo adivina.
+2. **Las cuentas se hacen en código** ([`paradigma.py`](../skills/paradigma/scripts/paradigma.py)), nunca las estima el modelo.
+3. **Levantar plata no prueba que algo funcione.** Cada empresa se marca como *anunciada*, *desplegada* o *con clientes que pagan*, con la evidencia.
+4. **Nada se llama hueco abierto hasta que pasó el chequeo de por qué no.**
+5. **Un segundo agente, que no hizo la investigación, revisa el trabajo.**
 
 ## Qué obtenés
 
 <div align="center">
-<img alt="Matriz de huecos con cuatro cuadrantes: espacio en blanco, saturado, dormido, riesgo de hype" src="../assets/gap-matrix.svg" width="78%">
+<img alt="Matriz de huecos con cuatro cuadrantes: hueco abierto, saturado, dormido, riesgo de hype" src="../assets/gap-matrix.svg" width="78%">
 <br>
 <sub>Ilustración de la matriz de huecos. Una corrida real grafica las restricciones de tu campo.</sub>
 </div>
@@ -83,9 +82,9 @@ Esos cambios suelen ser públicos, así que seguirlos por sí solo no da ventaja
 
 | Cuadrante | Significado | Qué hace el informe |
 |---|---|---|
-| **Espacio en blanco** (White space) | La restricción cayó mucho y pocos construyen sobre ella | Corre el chequeo de por qué no y clasifica cada caso como *no intentado*, *intentado demasiado temprano* (con las empresas que fallaron y las fechas) o *bloqueado* |
-| **Saturado** (Crowded) | Cayó mucho y muchos construyen | Lista las empresas y hasta dónde llegó cada una. Es el panorama de consenso |
-| **Riesgo de hype** (Hype risk) | Cambió poco, pero muchos construyen igual | Lo señala explícitamente |
+| **Hueco abierto** (Open gap) | La restricción bajó mucho (más barato, permitido, más fácil), pero pocas empresas aprovechan el cambio todavía | Corre el chequeo de por qué no y clasifica cada caso como *no intentado*, *intentado demasiado temprano* (con las empresas que fallaron y las fechas) o *bloqueado* |
+| **Saturado** (Crowded) | La restricción bajó mucho y muchas empresas ya la aprovechan | Lista quiénes son y hasta dónde llegó cada una. Es lo que la mayoría del rubro ya sabe |
+| **Riesgo de hype** (Hype risk) | La restricción casi no se movió, pero muchas empresas construyen igual | Lo marca como advertencia: mucha actividad sin un cambio real debajo, así que hay que tomar con cuidado las promesas de crecimiento |
 | **Dormido** (Dormant) | Poco cambio y poca actividad | Queda como referencia |
 
 **Entregables**
@@ -154,7 +153,6 @@ OpenCode también lee `~/.claude/skills/`, así que una instalación de Claude C
 | Búsqueda web y lectura de páginas | Cada número sale de una fuente |
 | Python 3.10+ con `pandas`, `numpy`, `matplotlib`, `openpyxl` (`scipy` opcional) | El motor de análisis, sus gráficos y el Excel |
 | Agentes auxiliares (opcional) | Investigación en paralelo y la verificación independiente. Sin ellos trabaja paso a paso y marca la verificación como autoverificada |
-| `OPENALEX_API_KEY` (opcional, [gratis](https://openalex.org)) | Conteo de papers cuando se agota la cuota gratuita compartida. Sin ella esas columnas quedan vacías y el informe lo dice |
 
 ## Uso
 
