@@ -1,6 +1,6 @@
 {
   "name": "paradigma",
-  "description": "PARADIGMA: map which constraints in a field fell, who is building on them, and where the white space is.",
+  "description": "PARADIGMA: map which constraints in a field fell, who is building on them, and where the open gaps are.",
   "owner": {
     "name": "qaemu"
   },
