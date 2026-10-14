@@ -90,7 +90,7 @@ Those changes are usually public, so tracking them alone gives you no edge. The 
 **Deliverables**
 
 - **Report.** The panorama first: biggest drops, tightening constraints, open gaps, crowded zones, hype risks, and dated changes in the next 1–5 years such as laws taking effect and patents expiring. Then one card per constraint with its curve, yearly change and margin of error, fold change, trend shape, grade, thresholds, companies and why-not label. It ends with method, confidence and sources.
-- **Workbook.** `constraints`, `points`, `periods`, `curves`, `noncost`, `companies`, `activity`, `gap_matrix`, `whynot` and `verification`. Every row has its source link.
+- **Workbook (.xlsx).** Opens on **Start here**, which explains every term in plain words, then **Key findings**. After that come the gap matrix, why-not check, constraints, price curves, yearly medians, data points, laws and timeline, companies, funding rounds, activity, failures, searches with no result, and verification. Every row has its source link.
 - **Charts.** One log-scale curve per constraint, plus the gap matrix.
 
 ## Example

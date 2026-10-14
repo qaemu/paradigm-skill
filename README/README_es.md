@@ -90,7 +90,7 @@ Esos cambios suelen ser públicos, así que seguirlos por sí solo no da ventaja
 **Entregables**
 
 - **Informe.** Primero el panorama: las mayores caídas, las restricciones que se endurecen, los espacios en blanco, las zonas saturadas, los riesgos de hype y los cambios con fecha en los próximos 1–5 años, como leyes que entran en vigencia y patentes que vencen. Después, una ficha por restricción con su curva, el cambio anual y su margen de error, cuántas veces cambió, la forma de la tendencia, la nota, los umbrales, las empresas y la etiqueta de por qué no. Termina con método, confianza y fuentes.
-- **Planilla.** `constraints`, `points`, `periods`, `curves`, `noncost`, `companies`, `activity`, `gap_matrix`, `whynot` y `verification`. Cada fila tiene su enlace a la fuente.
+- **Planilla (.xlsx).** Abre en **Start here**, que explica cada término en palabras simples, y después **Key findings**. Siguen la matriz de huecos, el chequeo de por qué no, las restricciones, las curvas de precio, las medianas por año, los datos, las leyes y la línea de tiempo, las empresas, las rondas de inversión, la actividad, los fracasos, las búsquedas sin resultado y la verificación. Cada fila tiene su enlace a la fuente.
 - **Gráficos.** Una curva en escala logarítmica por restricción, más la matriz de huecos.
 
 ## Ejemplo
