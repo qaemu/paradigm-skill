@@ -910,7 +910,7 @@ def main():
 
     c = sp.add_parser("papers")
     c.add_argument("--queries", default="paper_queries.csv")
-    c.add_argument("--start", type=int, default=2005)
+    c.add_argument("--start", type=int, default=2020)
     c.add_argument("--end", type=int, default=2025)
     c.add_argument("--out", default="papers.csv")
     c.set_defaults(f=cmd_papers)

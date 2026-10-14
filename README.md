@@ -164,7 +164,7 @@ OpenCode also reads `~/.claude/skills/`, so a Claude Code install works there to
 |---|---|---|
 | `field` | required | If it's very broad, like *hardware* or *health*, PARADIGMA suggests 3–4 narrower subfields first. Narrower fields give much better results |
 | `region` | global | Notes where the data is US- or EU-centric |
-| `years` | `20` | How many years back to look, ending at the last full year. Write `10`, `10y` or `years=10` (5 to 50), or a range like `2010-2025`. Use 5–10 for fast fields, 20 for most hardware, 30+ for slow infrastructure. Short windows give fewer data points per curve, so grades are lower |
+| `years` | `5` | How many years back to look, ending at the last full year. Write `10`, `10y` or `years=10` (5 to 50), or a range like `2010-2025`. The default shows recent change. Use 10–20 to see the full curve in most hardware fields, 30+ for slow infrastructure. Short windows give fewer data points per curve, so grades are lower, and anything that fell earlier looks unchanged |
 | depth | `standard` | `standard` covers 12–25 constraints. `deep` covers up to 40, with denser curves and why-not checks on every candidate |
 
 ```text
@@ -234,10 +234,10 @@ These scores are relative. They rank the constraints of one field against each o
 ```bash
 cd skills/paradigma/scripts
 python3 paradigma.py cpi                  # US CPI annual averages from FRED
-python3 paradigma.py curves --start 2006 --end 2025 --plots   # points.csv -> curves.csv, periods.csv, plots/
-python3 paradigma.py papers --start 2005 --end 2025   # OpenAlex paper counts
+python3 paradigma.py curves --start 2021 --end 2025 --plots   # points.csv -> curves.csv, periods.csv, plots/
+python3 paradigma.py papers --start 2020 --end 2025   # OpenAlex paper counts
 python3 paradigma.py gap --plots          # curves + activity -> gap_matrix.csv, plots/gap_matrix.png
-python3 paradigma.py workbook --field "…" --start 2006 --end 2025   # every table -> readable .xlsx
+python3 paradigma.py workbook --field "…" --start 2021 --end 2025   # every table -> readable .xlsx
 ```
 
 The CSV schemas are in [`SKILL.md`, Appendix B](skills/paradigma/SKILL.md#appendix-b-csv-schemas).
