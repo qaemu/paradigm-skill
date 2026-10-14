@@ -206,7 +206,16 @@ If no Agent tool is available, do this as a separate pass yourself and state in 
    - what paid databases (PitchBook, Gartner and so on) would add
 7. **Sources.**
 
-**2. Data workbook.** Use the spreadsheet artifact type if listed, otherwise .xlsx. Sheets: constraints, points, periods, curves, noncost, companies, activity, gap_matrix, whynot, verification.
+**2. Data workbook.** Use the spreadsheet artifact type if listed, otherwise .xlsx. Write it for a reader with no background in market research:
+
+- First sheet **Start here**: what the run is, how to read it in 5 minutes, a plain-words glossary (constraint, fold change, grade, drop and activity scores, each quadrant, each why-not label, company status, verification verdicts) and a list of sheets.
+- Second sheet **Key findings**: one row per finding, with the number, the confidence and what it means.
+- Then: gap matrix, why-not, constraints, curves, yearly medians, data points, laws and timeline, companies, funding, activity, failures, searches with no result, verification.
+- Plain-language column headers (not CSV field names), and drop internal columns.
+- Full cell grid, a dark header row with white text, light zebra rows, wrapped text, frozen header row, filters on every table, and clickable source links.
+- Colour-code labels (verdicts, quadrants, why-not results, status, grades) with dark text on light fills so contrast stays high.
+
+In the report too, explain each term the first time it appears.
 
 **3. Final reply:** 3–5 lines covering the biggest shifts, the top white spaces, the main confidence caveat, and the deliverables.
 
