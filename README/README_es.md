@@ -1,10 +1,10 @@
 <div align="center">
 
-<img alt="PARADIGMA: mapeá cómo cambiaron las restricciones de un campo en dos décadas y encontrá lo que acaba de volverse posible" src="../assets/banner.svg" width="100%">
+<img alt="PARADIGMA: mapeá cómo cambiaron las restricciones de un campo en los años que elijas y encontrá lo que acaba de volverse posible" src="../assets/banner.svg" width="100%">
 
 <br>
 
-**Una skill para agentes que mapea cómo cambiaron las restricciones de un campo en dos décadas,<br>para encontrar dónde acaba de volverse posible un nuevo producto, emprendimiento o línea de investigación.**
+**Una skill para agentes que mapea cómo cambiaron las restricciones de un campo en los años que elijas (20 por defecto),<br>para encontrar dónde acaba de volverse posible un nuevo producto, emprendimiento o línea de investigación.**
 
 [English](../README.md) | **Español** | [简体中文](README_cn.md)
 
@@ -94,6 +94,10 @@ Esos cambios suelen ser públicos, así que seguirlos por sí solo no da ventaja
 - **Planilla.** `constraints`, `points`, `periods`, `curves`, `noncost`, `companies`, `activity`, `gap_matrix`, `whynot` y `verification`. Cada fila tiene su enlace a la fuente.
 - **Gráficos.** Una curva en escala logarítmica por restricción, más la matriz de huecos.
 
+## Ejemplo
+
+Hay una corrida completa sobre **mantenimiento predictivo de maquinaria industrial** (2006–2025) en [`examples/predictive-maintenance`](../examples/predictive-maintenance). Incluye el informe, la matriz de huecos, un Excel con una hoja *Start here* que explica cada término, y cada dato con su fuente. La corrida es honesta sobre lo que no encontró: el chequeo de por qué no descartó los dos huecos que el motor marcó en la primera pasada.
+
 ## Instalación
 
 PARADIGMA sigue el formato abierto [Agent Skills](https://agentskills.io): un `SKILL.md` más un motor en Python. Cualquier agente que pueda navegar la web, correr Python e, idealmente, lanzar agentes auxiliares puede usarlo.
@@ -155,20 +159,21 @@ OpenCode también lee `~/.claude/skills/`, así que una instalación de Claude C
 ## Uso
 
 ```text
-/paradigma <campo> [región] [ventana] [standard|deep]
+/paradigma <campo> [región] [años] [standard|deep]
 ```
 
 | Argumento | Por defecto | Notas |
 |---|---|---|
 | `campo` | obligatorio | Si es muy amplio, como *hardware* o *salud*, PARADIGMA primero sugiere 3–4 subcampos más acotados. Los campos acotados dan resultados mucho mejores |
 | `región` | global | Indica dónde los datos están centrados en EE. UU. o la UE |
-| `ventana` | 20 años hasta el último año completo | |
+| `años` | `20` | Cuántos años hacia atrás mirar, hasta el último año completo. Escribí `10`, `10y` o `years=10` (de 5 a 50), o un rango como `2010-2025`. Usá 5–10 para campos rápidos, 20 para la mayoría del hardware y 30+ para infraestructura lenta. Con ventanas cortas cada curva tiene menos datos, así que las notas bajan |
 | profundidad | `standard` | `standard` cubre 12–25 restricciones. `deep` cubre hasta 40, con curvas más densas y chequeo de por qué no en cada candidato |
 
 ```text
 /paradigma maquinaria agrícola
 /paradigma fabricación en lotes pequeños América Latina
 /paradigma instrumental de laboratorio 2010-2025 deep
+/paradigma alineadores dentales UE 10
 ```
 
 > [!IMPORTANT]
@@ -231,7 +236,7 @@ Estos puntajes son relativos. Ordenan las restricciones de un campo entre sí, n
 ```bash
 cd skills/paradigma/scripts
 python3 paradigma.py cpi                  # promedios anuales del IPC de EE. UU. desde FRED
-python3 paradigma.py curves --plots       # points.csv -> curves.csv, periods.csv, plots/
+python3 paradigma.py curves --start 2006 --end 2025 --plots   # points.csv -> curves.csv, periods.csv, plots/
 python3 paradigma.py papers --start 2005 --end 2025   # conteo de papers en OpenAlex
 python3 paradigma.py gap --plots          # curvas + actividad -> gap_matrix.csv, plots/gap_matrix.png
 ```
@@ -258,7 +263,7 @@ Todas las fuentes que usa PARADIGMA son gratuitas. El informe indica dónde agre
 - **Las estadísticas se inclinan a EE. UU. y la UE.** El informe señala el sesgo regional.
 - **Llegar demasiado temprano se ve igual que equivocarse.** Las caídas de menos de 3 años se marcan como *tempranas*.
 - **La actividad especulativa no es adopción.** El informe separa el hype de los usuarios con una necesidad real.
-- **Estado: v0.1, experimental.** El motor pasa un conjunto de pruebas sin conexión con datos sintéticos de respuesta conocida. Todavía no se publicó una corrida real completa. La primera se agregará a `examples/`.
+- **Estado: v0.1, experimental.** El motor pasa un conjunto de pruebas sin conexión con datos sintéticos de respuesta conocida. Hay una corrida real completa publicada en [`examples/predictive-maintenance`](../examples/predictive-maintenance); además sirvió para encontrar y corregir un error del motor.
 
 ## Preguntas frecuentes
 
@@ -283,6 +288,7 @@ paradigma-skill/
 │   ├── SKILL.md             instrucciones que sigue el agente
 │   └── scripts/paradigma.py motor de análisis (curvas, matriz de huecos, IPC, papers)
 ├── tests/test_engine.py     prueba sin conexión con respuestas conocidas
+├── examples/               una corrida real completa (mantenimiento predictivo)
 ├── dist/paradigma.zip       skill lista para subir a las apps de Claude (tools/package.sh)
 ├── tools/                   make_assets.py (gráficos del README), package.sh (regenera el ZIP)
 ├── README/                  traducciones del README
@@ -290,7 +296,7 @@ paradigma-skill/
 ```
 
 ```bash
-python3 tests/test_engine.py   # deberían salir 10 líneas PASS
+python3 tests/test_engine.py   # deberían salir 13 líneas PASS
 ```
 
 ## Contribuir

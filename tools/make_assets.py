@@ -55,8 +55,8 @@ def banner():
     # left: wordmark + statement
     b.append(t(72, 176, "PARADIGMA", 76, C["ink"], 600, extra='letter-spacing="-2" textLength="452" lengthAdjust="spacingAndGlyphs"'))
     b.append(t(74, 230, "Map how a field's constraints changed", 24, C["body"]))
-    b.append(t(74, 262, "over two decades, and find what just", 24, C["body"]))
-    b.append(t(74, 294, "became possible.", 24, C["body"]))
+    b.append(t(74, 262, "over the years you choose, and find", 24, C["body"]))
+    b.append(t(74, 294, "what just became possible.", 24, C["body"]))
     x = 74
     for lab in ["Agent skill", "Claude Code", "OpenCode", "Codex"]:
         p, w = pill(x, 336, lab, C["canvas"], C["ink"], 14, 14, 32)
@@ -105,7 +105,7 @@ def banner():
         b.append(t(sx, sy, big, 20, C["ink"], 600))
         b.append(t(sx, sy + 20, small, 12, C["muted"]))
     b.append(t(X + CW - 20, Y + CH + 30, "Illustrative example", 12, C["muted"], 400, "end"))
-    return svg(W, H, "\n".join(b), "PARADIGMA: map how a field's constraints changed over two decades, and find what just became possible")
+    return svg(W, H, "\n".join(b), "PARADIGMA: map how a field's constraints changed over the years you choose, and find what just became possible")
 
 
 # ---------------------------------------------------------------- pipeline

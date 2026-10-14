@@ -1,10 +1,10 @@
 <div align="center">
 
-<img alt="PARADIGMA：梳理某个领域的约束在二十年间如何变化，找出刚刚变得可行的事物" src="../assets/banner.svg" width="100%">
+<img alt="PARADIGMA：梳理某个领域的约束在你选定的年数内如何变化，找出刚刚变得可行的事物" src="../assets/banner.svg" width="100%">
 
 <br>
 
-**一个智能体技能（Agent Skill）：梳理某个领域的约束在二十年间如何变化，<br>帮助你发现新产品、新创业项目或新研究方向刚刚变得可行的地方。**
+**一个智能体技能（Agent Skill）：梳理某个领域的约束在你选定的年数内（默认 20 年）如何变化，<br>帮助你发现新产品、新创业项目或新研究方向刚刚变得可行的地方。**
 
 [English](../README.md) | [Español](README_es.md) | **简体中文**
 
@@ -94,6 +94,10 @@ npx skills add qaemu/paradigma-skill
 - **数据表。** `constraints`、`points`、`periods`、`curves`、`noncost`、`companies`、`activity`、`gap_matrix`、`whynot` 和 `verification`。每一行都附有来源链接。
 - **图表。** 每项约束一条对数刻度曲线，外加空白矩阵。
 
+## 示例
+
+[`examples/predictive-maintenance`](../examples/predictive-maintenance) 中有一次完整运行：**工业机械预测性维护**（2006–2025）。其中包括报告、空白矩阵、一个带有 *Start here* 工作表（解释每个术语）的 Excel 工作簿，以及每个数据点及其来源。这次运行如实说明了它没能找到的东西：引擎第一轮标出的两个空白机会，都被“为什么没有”检查撤回了。
+
 ## 安装
 
 PARADIGMA 遵循开放的 [Agent Skills](https://agentskills.io) 格式：一个 `SKILL.md` 加一个 Python 引擎。任何能够浏览网页、运行 Python，并且最好能启动辅助智能体的智能体都可以使用它。
@@ -155,20 +159,21 @@ OpenCode 也会读取 `~/.claude/skills/`，因此在 Claude Code 中安装的�
 ## 用法
 
 ```text
-/paradigma <领域> [地区] [时间窗口] [standard|deep]
+/paradigma <领域> [地区] [年数] [standard|deep]
 ```
 
 | 参数 | 默认值 | 说明 |
 |---|---|---|
 | `领域` | 必填 | 如果范围很广，比如*硬件*或*医疗*，PARADIGMA 会先建议 3–4 个更具体的子领域。范围越具体，结果越好 |
 | `地区` | 全球 | 会标注数据偏重美国或欧盟的部分 |
-| `时间窗口` | 截至上一个完整年份的 20 年 | |
+| `年数` | `20` | 向前回看多少年，截至上一个完整年份。可写 `10`、`10y` 或 `years=10`（5 到 50），也可写区间如 `2010-2025`。变化快的领域用 5–10 年，大多数硬件用 20 年，变化慢的基础设施用 30 年以上。窗口越短，每条曲线的数据越少，评级也会更低 |
 | 深度 | `standard` | `standard` 覆盖 12–25 项约束。`deep` 最多覆盖 40 项，曲线数据更密集，并对每个候选项进行“为什么没有”检查 |
 
 ```text
 /paradigma 农业机械
 /paradigma 小批量制造 拉丁美洲
 /paradigma 实验室仪器 2010-2025 deep
+/paradigma 隐形牙套 欧盟 10
 ```
 
 > [!IMPORTANT]
@@ -231,7 +236,7 @@ OpenCode 也会读取 `~/.claude/skills/`，因此在 Claude Code 中安装的�
 ```bash
 cd skills/paradigma/scripts
 python3 paradigma.py cpi                  # 从 FRED 获取美国 CPI 年均值
-python3 paradigma.py curves --plots       # points.csv -> curves.csv, periods.csv, plots/
+python3 paradigma.py curves --start 2006 --end 2025 --plots   # points.csv -> curves.csv, periods.csv, plots/
 python3 paradigma.py papers --start 2005 --end 2025   # OpenAlex 论文数量
 python3 paradigma.py gap --plots          # 曲线 + 活动 -> gap_matrix.csv, plots/gap_matrix.png
 ```
@@ -258,7 +263,7 @@ PARADIGMA 使用的所有来源都是免费的。报告会注明付费数据库�
 - **统计数据偏重美国和欧盟。** 报告会标注地区偏差。
 - **太早和错了看起来是一样的。** 不到 3 年的下降会被标记为*早期*。
 - **投机驱动的活动不等于真实采用。** 报告会把炒作与有真实需求的用户区分开。
-- **状态：v0.1，实验性。** 引擎通过了一套基于已知答案合成数据的离线测试。目前尚未发布完整的真实运行结果，第一份将添加到 `examples/`。
+- **状态：v0.1，实验性。** 引擎通过了一套基于已知答案合成数据的离线测试。已在 [`examples/predictive-maintenance`](../examples/predictive-maintenance) 发布一次完整的真实运行，它还帮助发现并修复了一个引擎错误。
 
 ## 常见问题
 
@@ -283,6 +288,7 @@ paradigma-skill/
 │   ├── SKILL.md             智能体遵循的指令
 │   └── scripts/paradigma.py 分析引擎（曲线、空白矩阵、CPI、论文）
 ├── tests/test_engine.py     使用已知答案的离线测试
+├── examples/               一次完整的真实运行（预测性维护）
 ├── dist/paradigma.zip       可直接上传到 Claude 应用的技能包（tools/package.sh）
 ├── tools/                   make_assets.py（README 插图）、package.sh（重新打包 ZIP）
 ├── README/                  README 的翻译版本
@@ -290,7 +296,7 @@ paradigma-skill/
 ```
 
 ```bash
-python3 tests/test_engine.py   # 应输出 10 行 PASS
+python3 tests/test_engine.py   # 应输出 13 行 PASS
 ```
 
 ## 参与贡献

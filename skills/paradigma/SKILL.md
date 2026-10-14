@@ -1,14 +1,17 @@
 ---
 name: paradigma
 license: MIT
-description: PARADIGMA maps which constraints (costs, performance, laws, patents, skills, norms, supply) in a given field fell, are falling or are tightening over ~20 years, who is building on each, and where the white space is. Use when the user calls PARADIGMA or asks for a constraint-shift / paradigm panorama of a field.
+description: PARADIGMA maps which constraints (costs, performance, laws, patents, skills, norms, supply) in a given field fell, are falling or are tightening over a chosen number of years (20 by default), who is building on each, and where the white space is. Use when the user calls PARADIGMA or asks for a constraint-shift / paradigm panorama of a field.
 ---
 
 # PARADIGMA: constraint-shift panorama of a field
 
 **Goal:** give the user a clear, sourced panorama of a field. It covers which constraints fell, are falling or are tightening; who is building on each one; and where constraints fell but few people are building (white space). It is a map for deciding where to act. It is not idea generation and not a list of workarounds.
 
-**Invocation:** `/paradigma <field> [region] [window] [standard|deep]`. The field is required and comes from the invocation.
+**Invocation:** `/paradigma <field> [region] [years] [standard|deep]`. The field is required and comes from the invocation. Everything else is optional and can come in any order after the field.
+
+- **`years`**: how many years back the analysis looks. Accept a bare number (`10`), `10y`, `10 years` or `years=10`. Default **20**. Allowed range **5 to 50**; outside it, clamp and say so. An explicit range such as `2010-2025` is also accepted and sets both ends.
+- Examples: `/paradigma "solar inverters"`, `/paradigma "dental aligners" EU 10`, `/paradigma "cargo drones" global 15y deep`, `/paradigma "industrial robots" 2000-2025`.
 
 ## Non-negotiable rules
 
@@ -18,13 +21,14 @@ description: PARADIGMA maps which constraints (costs, performance, laws, patents
 4. **Every white-space candidate gets a "why not" check** before it's reported as white space.
 5. **Verify independently before delivery.** An agent that did not do the research checks the numbers and claims.
 6. **Be honest about confidence.** Show curve grades (A/B/C/D) and data gaps, and label what is consensus (widely covered) separately from what is non-obvious.
-7. **Anchor dates to today.** Get today's date first (time tool or `date`). The default window is the 20 years ending at the last full calendar year.
+7. **Anchor dates to today.** Get today's date first (time tool or `date`). The analysis window is the `years` ending at the last full calendar year: `END` = last full calendar year, `START` = `END − years + 1`. With the default of 20 and today in 2026, that is 2006–2025. Use `START` and `END` everywhere a window is mentioned below, and print them at the top of the report.
 
 ## Inputs and scope
 
 - **Field (required).** If it's missing, ask for it in one question.
 - **Breadth check.** If the field is broad (for example "mechanics," "hardware," "health," "energy"), ask once with AskUserQuestion. Offer 3–4 concrete subfields plus "Run broad anyway (shallower)." If nobody answers (unattended run), run broad, cap it at 25 constraints, and say so at the top of the report.
 - **Region:** default global. Note where the data is US- or EU-centric.
+- **Window (`years`):** see Invocation. Pick it to match how fast the field moves: 5–10 years for software-heavy or fast fields, 20 for most hardware fields, 30–50 for slow infrastructure. Short windows have consequences: with fewer than 8 yearly periods a curve cannot reach grade A unless the data is quarterly, and with 7 years or fewer the trend shape (recent 5 years vs the whole window) is not meaningful, so report it as n/a. Long windows reach back before most online price data; expect more gaps before about 2000.
 - **Depth:** `standard` covers 12–25 constraints. `deep` covers up to 40, with more points per curve and why-not checks on all candidates.
 
 ## Setup
@@ -77,7 +81,7 @@ Keep industrial and consumer grades as separate tiers.
 **Run the analysis:**
 
 ```
-python3 paradigma.py curves --plots
+python3 paradigma.py curves --start <START> --end <END> --plots
 ```
 
 - Choose annual vs quarterly with `--period auto`. Quarterly is used only when the data is dense.
@@ -103,7 +107,7 @@ Where to look, by type:
   - Regulatory sandboxes.
   - **Always capture laws with future effective dates.** They go in the timeline.
 - **Patents:**
-  - Google Patents or Lens.org: highly cited patents in the field filed 17–20 years before today, which are expiring now or soon. Also notable patents allowed to lapse early.
+  - Google Patents or Lens.org: highly cited patents in the field filed 17–20 years before today (this follows the 20-year patent term, not the analysis window), which are expiring now or soon. Also notable patents allowed to lapse early.
   - Record the number, assignee and estimated expiry (filing date + 20 years, marked approximate because patent terms can be adjusted).
 - **Skills and labor:**
   - Wage and shortage statistics: BLS Occupational Outlook, OECD and national statistics.
@@ -121,13 +125,13 @@ Where to look, by type:
 
 ## Phase 4: Activity scan (who is building on each constraint)
 
-Use the **same query wording across all constraints** so the signals are comparable. Run in parallel when possible. The window is the last 3–5 years.
+Use the **same query wording across all constraints** so the signals are comparable. Run in parallel when possible. The activity window is the last 5 years, or the whole analysis window if that is shorter.
 
 - **`companies_count`:** companies founded or pivoted to exploit this constraint after it fell. Record each one in `companies.csv`: what they do, when founded, last disclosed funding (amount, date, source), status (announced, deployed or paying) with an evidence URL, and `consensus`. Set `consensus=yes` if the company is heavily covered or well funded.
 - **`funding_usd_5y`:** sum of disclosed funding. Sources include press releases, free Crunchbase and Dealroom pages, and tech press. Note any undisclosed rounds.
 - **`patents_last3y`:** result counts from a fixed Google Patents or Lens.org query. Record the query.
 - **`papers_last3y` and `papers_prev3y`:**
-  - Write `paper_queries.csv` (columns constraint_id, query), then run `python3 paradigma.py papers --start <window start> --end <last full year>`. This uses OpenAlex, which needs `OPENALEX_API_KEY` in the environment once the free shared quota runs out. Keys are free at openalex.org.
+  - Write `paper_queries.csv` (columns constraint_id, query), then run `python3 paradigma.py papers --start <max(START, END−5)> --end <END>`. The script compares the last 3 years with the 3 before them. This uses OpenAlex, which needs `OPENALEX_API_KEY` in the environment once the free shared quota runs out. Keys are free at openalex.org.
   - If it fails, try WebFetch on the same OpenAlex API URL.
   - If that also fails, leave the papers columns blank (the script handles missing signals) and say so in the report.
 - **`launches_count`:** product launches or deployments. `job_postings` is optional.
@@ -177,7 +181,7 @@ If no Agent tool is available, do this as a separate pass yourself and state in 
 
 **1. Report.** Use the document artifact type if this session lists one. Otherwise publish an HTML page, or write .md if the user asks for that. Sections in this order:
 
-1. **Panorama** (one page): field, region, window, date.
+1. **Panorama** (one page): field, region, window (`START–END`, `years`), date.
    - Top constraints that fell, with fold change and grade.
    - Top tightening constraints.
    - White space (UNTRIED and TRIED TOO EARLY).
@@ -278,13 +282,13 @@ Subcommands: `cpi`, `curves`, `gap`, `papers`. Run `python3 paradigma.py <cmd> -
 
 ## Appendix C: research agent prompt template (Phase 2 and Phase 4)
 
-> You are collecting sourced data for a market panorama of **<FIELD>** (<REGION>, <WINDOW>). Today is <DATE>.
+> You are collecting sourced data for a market panorama of **<FIELD>** (<REGION>, window <START>–<END>). Today is <DATE>.
 > Your constraints: <list of constraint_id, name, metric/unit, tier>.
 > Return ONLY CSV rows matching this header: <header from Appendix B>.
 > Rules:
 > - Every row needs a working source URL that you actually opened. Never estimate or recall numbers from memory. If you can't find data for a period, leave that period out.
 > - Record values exactly as published, with currency, nominal or real basis, and date precision. Keep industrial and consumer tiers separate.
-> - Aim for at least 3 points per year and at least 2 independent sources per constraint across the window.
+> - Aim for at least 3 points per year and at least 2 independent sources per constraint across <START>–<END>. Leave out anything dated outside that window.
 > - Use these sources in priority order: primary datasets (Our World in Data, Santa Fe Performance Curve Database, BloombergNEF public summaries, IEA, NREL, USGS, BLS/FRED, academic learning-curve papers); then manufacturer and distributor price lists plus Wayback Machine snapshots; then reputable press and public report summaries.
 > - For companies: give status (announced, deployed or paying) with an evidence URL. A funding announcement alone is "announced."
 > After the CSV rows, add up to 5 lines describing coverage gaps.

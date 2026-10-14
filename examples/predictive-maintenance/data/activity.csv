@@ -1,0 +1,21 @@
+constraint_id,notes,companies_count,funding_usd_5y,launches_count,patents_last3y,job_postings,threshold_crossed,patent_query,papers_last3y,papers_prev3y
+C01,"no attributable company found in scan (unknown, not zero)",,,,,,,,511.0,157.0
+C02,"no attributable company found in scan (unknown, not zero)",,,,,,,,2825.0,724.0
+C03,"2 founded 2012+; 12 consensus; statuses: announced=7, deployed=7",14.0,188900000.0,4.0,,,,,342.0,197.0
+C04,"1 founded 2012+; 4 consensus; statuses: deployed=5, announced=2, paying=1",8.0,,1.0,,,,,220.0,110.0
+C05,"0 founded 2012+; 3 consensus; statuses: announced=2, deployed=2, paying=1",5.0,30000000.0,1.0,,,,,54.0,15.0
+C06,"2 founded 2012+; 6 consensus; statuses: announced=5, deployed=4, paying=1",10.0,547000000.0,3.0,,,,,998.0,163.0
+C07,"3 founded 2012+; 6 consensus; statuses: announced=7, deployed=2, paying=1",10.0,161924638.0,1.0,,,,,62.0,43.0
+C08,"4 founded 2012+; 6 consensus; statuses: announced=4, paying=3, deployed=1",8.0,367750000.0,2.0,,,,,840.0,122.0
+C09,"no attributable company found in scan (unknown, not zero)",,,,,,,,,
+C10,"6 founded 2012+; 12 consensus; statuses: announced=10, deployed=4, paying=2",16.0,568900000.0,5.0,,,,,451.0,38.0
+C11,"1 founded 2012+; 2 consensus; statuses: announced=5, deployed=5",10.0,33500000.0,3.0,,,,,797.0,131.0
+C12,0 founded 2012+; 2 consensus; statuses: announced=5,5.0,,,,,,,116.0,81.0
+C13,"1 founded 2012+; 3 consensus; statuses: announced=7, deployed=5",12.0,,,,,,,108.0,16.0
+C14,0 founded 2012+; 1 consensus; statuses: announced=1,1.0,,,,,,,797.0,66.0
+C15,"no attributable company found in scan (unknown, not zero)",,,,,,,,,
+C16,"no attributable company found in scan (unknown, not zero)",,,,,,,,,
+C17,"1 founded 2012+; 3 consensus; statuses: announced=4, deployed=1",5.0,81500000.0,,,,,,2756.0,1040.0
+C18,"12 founded 2012+; 19 consensus; statuses: deployed=12, announced=10, paying=4",26.0,704250000.0,12.0,,,,,3554.0,1295.0
+C19,"1 founded 2012+; 4 consensus; statuses: deployed=6, announced=3",9.0,20000000.0,2.0,,,,,198.0,68.0
+C20,"1 founded 2012+; 9 consensus; statuses: deployed=5, paying=2, announced=2",9.0,308850000.0,4.0,,,,,148.0,28.0

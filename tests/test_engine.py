@@ -4,8 +4,9 @@
     python3 tests/test_engine.py
 
 Builds a fixture with a known -20%/yr cost curve (plus a 100x outlier), a known
-+30%/yr performance curve with quarterly data, a flat sparse series, and two bad
-rows that must be rejected. Uses a flat CPI so the expected trends are exact.
++30%/yr performance curve with quarterly data, a flat sparse series, a series with
+only 3 periods, and two bad rows that must be rejected. Also reruns the curves on a
+10-year window to check that points outside it are dropped. Uses a flat CPI so the expected trends are exact.
 """
 import os
 import subprocess
@@ -38,6 +39,9 @@ def fixture(d):
     for y in (2010, 2015, 2020, 2024):
         rows.append(dict(constraint_id="C3", tier="all", date=str(y), value=50 * rng.lognormal(0, 0.05),
                          unit="USD/h", currency="USD", price_basis="nominal", source_url=f"https://example.com/c3/{y}"))
+    for y, val in ((2016, 80), (2016, 82), (2019, 60), (2022, 45)):            # 3 periods: fit falls back to points
+        rows.append(dict(constraint_id="C5", tier="all", date=str(y), value=val, unit="USD/unit", currency="USD",
+                         price_basis="nominal", source_url=f"https://example.com/c5/{y}/{val}"))
     rows.append(dict(constraint_id="C3", tier="all", date="2012", value=40, unit="USD/h", currency="USD",
                      price_basis="nominal", source_url=""))                       # no source -> reject
     rows.append(dict(constraint_id="C3", tier="all", date="2013", value=40, unit="ARS/h", currency="ARS",
@@ -47,6 +51,7 @@ def fixture(d):
         dict(constraint_id="C1", name="Industrial sensor", family="cost", unit="USD/unit", better="lower", qualitative_change_0to3=""),
         dict(constraint_id="C2", name="Energy density", family="performance", unit="Wh/kg", better="higher", qualitative_change_0to3=""),
         dict(constraint_id="C3", name="Technician labor", family="skill", unit="USD/h", better="lower", qualitative_change_0to3=""),
+        dict(constraint_id="C5", name="Sparse series", family="cost", unit="USD/unit", better="lower", qualitative_change_0to3=""),
         dict(constraint_id="C4", name="Drone rule", family="legal", unit="", better="", qualitative_change_0to3="3"),
     ]).to_csv(os.path.join(d, "constraints.csv"), index=False)
     pd.DataFrame([
@@ -67,6 +72,9 @@ def main():
         fixture(d)
         run(d, "curves", "--plots")
         run(d, "gap", "--plots")
+        run(d, "curves", "--start", "2012", "--end", "2021", "--outdir", "w10")
+        cw = pd.read_csv(os.path.join(d, "w10", "curves.csv")).set_index("constraint_id")
+        rw = pd.read_csv(os.path.join(d, "w10", "rejected_points.csv"))
         cv = pd.read_csv(os.path.join(d, "curves.csv")).set_index("constraint_id")
         rej = pd.read_csv(os.path.join(d, "rejected_points.csv"))
         gm = pd.read_csv(os.path.join(d, "gap_matrix.csv")).set_index("constraint_id")
@@ -80,6 +88,9 @@ def main():
             "C4 (rule removed, few builders) lands in white space": gm.loc["C4", "quadrant"].startswith("WHITE SPACE"),
             "C2 ranks above C1 on gap score": gm.loc["C2", "gap_score"] > gm.loc["C1", "gap_score"],
             "C1 lands in crowded": gm.loc["C1", "quadrant"].startswith("CROWDED"),
+            "C5 with 3 periods still gets a trend": cv.loc["C5", "annual_change_pct"] < 0,
+            "10-year window keeps C1 inside 2012-2021": int(str(cw.loc["C1", "first_period"])[:4]) >= 2012 and int(str(cw.loc["C1", "last_period"])[:4]) <= 2021,
+            "points outside the window are rejected with a reason": rw.reject_reason.str.startswith("outside window").sum() > 0,
             "plots written": os.path.exists(os.path.join(d, "plots", "gap_matrix.png")),
         }
     for name, ok in checks.items():

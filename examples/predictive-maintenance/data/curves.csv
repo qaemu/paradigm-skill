@@ -1,0 +1,27 @@
+constraint_id,tier,period_type,n_points,n_periods,n_sources,first_period,last_period,low_conf_period_share,better,fit,annual_change_pct,annual_change_ci_low_pct,annual_change_ci_high_pct,fitted_start,fitted_end,fold_change_over_window,span_years,recent5y_annual_change_pct,improvement_fold,class,trend_shape,grade
+C01,aws_s3_standard,year,7,5,6,2006,2016,1.0,lower,theil-sen on log10(period medians),-20.42,-37.19,-2.78,0.689942,0.070319,0.1019,10.0,-35.23,9.812,improving,accelerating,B
+C01,azure_blob_hot,year,2,2,2,2013,2017,1.0,lower,insufficient (<3 distinct periods),,,,,,,,,,,,D
+C01,gcs_standard,year,4,3,4,2014,2022,1.0,lower,theil-sen on log10(points),-3.65,-18.2,0.0,0.038516,0.028431,0.7382,8.17,,1.355,flat / unclear,,C
+C02,gpu_fp32_consumer,year,30,18,2,2006,2025,0.89,lower,theil-sen on log10(period medians),-19.81,-23.06,-17.06,0.889416,0.013423,0.0151,19.0,-14.92,66.263,improved >=10x,decelerating,B
+C03,consumer_mems_asp,year,2,2,2,2008,2013,1.0,lower,insufficient (<3 distinct periods),,,,,,,,,,,,D
+C03,industrial_piezo,year,1,1,1,2016,2016,1.0,lower,insufficient (<3 distinct periods),,,,,,,,,,,,D
+C04,all,year,11,8,10,2011,2021,0.88,lower,theil-sen on log10(period medians),-28.48,-55.05,-6.12,0.24489,0.00858,0.035,10.0,-6.46,28.543,improved >=10x,decelerating,B
+C05,2g_3g,year,2,1,2,2019,2019,1.0,lower,insufficient (<3 distinct periods),,,,,,,,,,,,D
+C05,lte_cat1_bis,year,1,1,1,2022,2022,1.0,lower,insufficient (<3 distinct periods),,,,,,,,,,,,D
+C05,lte_cat4,year,1,1,1,2017,2017,1.0,lower,insufficient (<3 distinct periods),,,,,,,,,,,,D
+C05,lte_m,year,1,1,1,2020,2020,1.0,lower,insufficient (<3 distinct periods),,,,,,,,,,,,D
+C06,edge_module_board,year,6,3,6,2019,2024,0.67,lower,theil-sen on log10(points),-29.75,-52.36,17.41,23.95758,3.864245,0.1613,5.17,-29.72,6.2,flat / unclear,steady,C
+C07,1min,year,1,1,1,2016,2016,1.0,higher,insufficient (<3 distinct periods),,,,,,,,,,,,D
+C07,30min,year,2,1,1,2019,2019,1.0,higher,insufficient (<3 distinct periods),,,,,,,,,,,,D
+C07,4h,year,3,2,2,2019,2020,1.0,higher,insufficient (<3 distinct periods),,,,,,,,,,,,D
+C07,6h,year,1,1,1,2025,2025,1.0,higher,insufficient (<3 distinct periods),,,,,,,,,,,,D
+C07,90s,year,1,1,1,2020,2020,1.0,higher,insufficient (<3 distinct periods),,,,,,,,,,,,D
+C07,hourly,year,4,2,2,2019,2023,1.0,higher,insufficient (<3 distinct periods),,,,,,,,,,,,D
+C07,unspecified,year,3,2,3,2020,2025,1.0,higher,theil-sen on log10(points),4.81,0.0,281.47,4.961005,6.201256,1.25,4.75,4.81,1.25,flat / unclear,steady,C
+C08,all_industries_abb,year,1,1,1,2023,2023,1.0,lower,insufficient (<3 distinct periods),,,,,,,,,,,,D
+C08,all_industries_senseye,year,1,1,1,2021,2021,1.0,lower,insufficient (<3 distinct periods),,,,,,,,,,,,D
+C08,automotive,year,3,3,3,2021,2024,1.0,lower,theil-sen on log10(points),13.93,3.57,37.86,1931413.343187,2856356.603353,1.4789,3.0,13.93,0.676,worsening (constraint tightening),accelerating,C
+C08,fmcg,year,3,3,3,2021,2024,1.0,lower,theil-sen on log10(points),9.63,-7.21,53.03,33702.331489,44408.402484,1.3177,3.0,9.63,0.759,flat / unclear,accelerating,C
+C08,heavy_industry,year,2,2,2,2021,2022,1.0,lower,insufficient (<3 distinct periods),,,,,,,,,,,,D
+C08,oil_gas,year,2,2,2,2021,2022,1.0,lower,insufficient (<3 distinct periods),,,,,,,,,,,,D
+C09,all,year,18,18,18,2006,2023,1.0,lower,theil-sen on log10(period medians),0.2,0.01,0.36,31.425538,32.514112,1.0346,17.0,-0.66,0.967,flat / unclear,accelerating,B

@@ -1,10 +1,10 @@
 <div align="center">
 
-<img alt="PARADIGMA: map how a field's constraints changed over two decades, and find what just became possible" src="assets/banner.svg" width="100%">
+<img alt="PARADIGMA: map how a field's constraints changed over the years you choose, and find what just became possible" src="assets/banner.svg" width="100%">
 
 <br>
 
-**An agent skill that maps how a field's constraints changed over two decades,<br>to find where a new product, startup or line of research has just become possible.**
+**An agent skill that maps how a field's constraints changed over the years you choose (20 by default),<br>to find where a new product, startup or line of research has just become possible.**
 
 **English** | [Español](README/README_es.md) | [简体中文](README/README_cn.md)
 
@@ -94,6 +94,10 @@ Those changes are usually public, so tracking them alone gives you no edge. The 
 - **Workbook.** `constraints`, `points`, `periods`, `curves`, `noncost`, `companies`, `activity`, `gap_matrix`, `whynot` and `verification`. Every row has its source link.
 - **Charts.** One log-scale curve per constraint, plus the gap matrix.
 
+## Example
+
+A full run on **predictive maintenance for industrial machinery** (2006–2025) is in [`examples/predictive-maintenance`](examples/predictive-maintenance). It has the report, the gap matrix, an Excel workbook with a *Start here* sheet that explains every term, and every data point with its source. The run is honest about what it couldn't find: the why-not check withdrew both white spaces the engine flagged on the first pass.
+
 ## Install
 
 PARADIGMA follows the open [Agent Skills](https://agentskills.io) format: a `SKILL.md` plus a Python engine. Any agent that can browse the web, run Python and, ideally, start helper agents can use it.
@@ -155,20 +159,21 @@ OpenCode also reads `~/.claude/skills/`, so a Claude Code install works there to
 ## Usage
 
 ```text
-/paradigma <field> [region] [window] [standard|deep]
+/paradigma <field> [region] [years] [standard|deep]
 ```
 
 | Argument | Default | Notes |
 |---|---|---|
 | `field` | required | If it's very broad, like *hardware* or *health*, PARADIGMA suggests 3–4 narrower subfields first. Narrower fields give much better results |
 | `region` | global | Notes where the data is US- or EU-centric |
-| `window` | 20 years ending last full year | |
+| `years` | `20` | How many years back to look, ending at the last full year. Write `10`, `10y` or `years=10` (5 to 50), or a range like `2010-2025`. Use 5–10 for fast fields, 20 for most hardware, 30+ for slow infrastructure. Short windows give fewer data points per curve, so grades are lower |
 | depth | `standard` | `standard` covers 12–25 constraints. `deep` covers up to 40, with denser curves and why-not checks on every candidate |
 
 ```text
 /paradigma agricultural machinery
 /paradigma small-batch manufacturing Latin America
 /paradigma lab instruments 2010-2025 deep
+/paradigma dental aligners EU 10
 ```
 
 > [!IMPORTANT]
@@ -231,7 +236,7 @@ These scores are relative. They rank the constraints of one field against each o
 ```bash
 cd skills/paradigma/scripts
 python3 paradigma.py cpi                  # US CPI annual averages from FRED
-python3 paradigma.py curves --plots       # points.csv -> curves.csv, periods.csv, plots/
+python3 paradigma.py curves --start 2006 --end 2025 --plots   # points.csv -> curves.csv, periods.csv, plots/
 python3 paradigma.py papers --start 2005 --end 2025   # OpenAlex paper counts
 python3 paradigma.py gap --plots          # curves + activity -> gap_matrix.csv, plots/gap_matrix.png
 ```
@@ -258,7 +263,7 @@ Every source PARADIGMA uses is free. The report says where paid databases would 
 - **Statistics lean US and EU.** The report flags regional bias.
 - **Being too early looks the same as being wrong.** Drops less than 3 years old are flagged as *early*.
 - **Activity driven by speculation is not adoption.** The report separates hype from users with a need.
-- **Status: v0.1, experimental.** The engine passes an offline test suite on synthetic data with known answers. No full real run has been published yet. The first one will be added to `examples/`.
+- **Status: v0.1, experimental.** The engine passes an offline test suite on synthetic data with known answers. One full real run is published in [`examples/predictive-maintenance`](examples/predictive-maintenance); it also exposed and fixed an engine bug.
 
 ## FAQ
 
@@ -283,6 +288,7 @@ paradigma-skill/
 │   ├── SKILL.md             instructions the agent follows
 │   └── scripts/paradigma.py analysis engine (curves, gap matrix, CPI, papers)
 ├── tests/test_engine.py     offline test with known answers
+├── examples/               a full real run (predictive maintenance)
 ├── dist/paradigma.zip       ready-to-upload skill for Claude apps (tools/package.sh)
 ├── tools/                   make_assets.py (README artwork), package.sh (rebuilds the ZIP)
 ├── README/                  translations of this page
@@ -290,7 +296,7 @@ paradigma-skill/
 ```
 
 ```bash
-python3 tests/test_engine.py   # expect 10 PASS lines
+python3 tests/test_engine.py   # expect 13 PASS lines
 ```
 
 ## Contributing

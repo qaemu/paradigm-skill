@@ -115,6 +115,8 @@ def cmd_curves(a):
         basis = (r.get("price_basis", "") or "").lower()
         if not why and cur not in ("", "USD", "NA", "N/A"):
             why = f"currency {cur}: convert to USD before analysis"
+        if not why and ((a.start and y < a.start) or (a.end and y > a.end)):
+            why = f"outside window {a.start or ''}-{a.end or ''}"
         if why:
             rejects.append({**r.to_dict(), "reject_reason": why})
             continue
@@ -168,7 +170,7 @@ def cmd_curves(a):
             per_rows.append({"constraint_id": cid, "tier": tier, "period_type": period, **p.to_dict()})
 
         # fit on period medians (one vote per period); fallback to points
-        fit_on = agg if len(agg) >= 4 else g.rename(columns={"t": "pt", "value_real": "median"})
+        fit_on = agg if len(agg) >= 4 else g.drop(columns=["pt"]).rename(columns={"t": "pt", "value_real": "median"})
         x = fit_on["pt"].astype(float).values
         yv = np.log10(fit_on["median"].astype(float).values)
         res = {"constraint_id": cid, "tier": tier, "period_type": period,
@@ -230,7 +232,8 @@ def cmd_curves(a):
     pd.DataFrame(per_rows).to_csv(os.path.join(a.outdir, "periods.csv"), index=False)
     cv = pd.DataFrame(curve_rows)
     cv.to_csv(os.path.join(a.outdir, "curves.csv"), index=False)
-    meta = {"base_year": base_year, "min_n": a.min_n, "rejected": len(rejects)}
+    meta = {"base_year": base_year, "min_n": a.min_n, "rejected": len(rejects),
+            "window_start": a.start, "window_end": a.end}
     json.dump(meta, open(os.path.join(a.outdir, "curves_meta.json"), "w"), indent=2)
     print(cv.to_string(index=False))
     print(f"\nrejected points: {len(rejects)}  base year: {base_year}")
@@ -408,6 +411,8 @@ def main():
     c.add_argument("--base-year", type=int)
     c.add_argument("--period", choices=["auto", "year", "quarter"], default="auto")
     c.add_argument("--min-n", type=int, default=3)
+    c.add_argument("--start", type=int, help="first year of the analysis window (points before it are rejected)")
+    c.add_argument("--end", type=int, help="last year of the analysis window (points after it are rejected)")
     c.add_argument("--outdir", default=".")
     c.add_argument("--plots", action="store_true")
     c.set_defaults(f=cmd_curves)
