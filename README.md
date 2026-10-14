@@ -152,7 +152,7 @@ OpenCode also reads `~/.claude/skills/`, so a Claude Code install works there to
 | Needs | Why |
 |---|---|
 | Web search and page fetching | Every number comes from a source |
-| Python 3.10+ with `pandas`, `numpy`, `matplotlib` (`scipy` optional) | The analysis engine |
+| Python 3.10+ with `pandas`, `numpy`, `matplotlib`, `openpyxl` (`scipy` optional) | The analysis engine, its charts and the Excel workbook |
 | Helper agents (optional) | Parallel research and the independent check. Without them it runs one step at a time and marks the check as self-checked |
 | `OPENALEX_API_KEY` (optional, [free](https://openalex.org)) | Paper counts once the shared free quota runs out. Without it those columns stay blank and the report says so |
 
@@ -239,6 +239,7 @@ python3 paradigma.py cpi                  # US CPI annual averages from FRED
 python3 paradigma.py curves --start 2006 --end 2025 --plots   # points.csv -> curves.csv, periods.csv, plots/
 python3 paradigma.py papers --start 2005 --end 2025   # OpenAlex paper counts
 python3 paradigma.py gap --plots          # curves + activity -> gap_matrix.csv, plots/gap_matrix.png
+python3 paradigma.py workbook --field "…" --start 2006 --end 2025   # every table -> readable .xlsx
 ```
 
 The CSV schemas are in [`SKILL.md`, Appendix B](skills/paradigma/SKILL.md#appendix-b-csv-schemas).
@@ -296,7 +297,7 @@ paradigma-skill/
 ```
 
 ```bash
-python3 tests/test_engine.py   # expect 13 PASS lines
+python3 tests/test_engine.py   # expect 15 PASS lines
 ```
 
 ## Contributing

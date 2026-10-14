@@ -52,12 +52,14 @@ def fixture(d):
         dict(constraint_id="C2", name="Energy density", family="performance", unit="Wh/kg", better="higher", qualitative_change_0to3=""),
         dict(constraint_id="C3", name="Technician labor", family="skill", unit="USD/h", better="lower", qualitative_change_0to3=""),
         dict(constraint_id="C5", name="Sparse series", family="cost", unit="USD/unit", better="lower", qualitative_change_0to3=""),
+        dict(constraint_id="C6", name="Export controls", family="supply", unit="", better="", qualitative_change_0to3="2", direction="tightening"),
         dict(constraint_id="C4", name="Drone rule", family="legal", unit="", better="", qualitative_change_0to3="3"),
     ]).to_csv(os.path.join(d, "constraints.csv"), index=False)
     pd.DataFrame([
         dict(constraint_id="C1", companies_count=40, funding_usd_5y=8e8, patents_last3y=300, launches_count=25, papers_last3y=900, papers_prev3y=600, threshold_crossed="yes"),
         dict(constraint_id="C2", companies_count=3, funding_usd_5y=2e7, patents_last3y=40, launches_count=2, papers_last3y=2500, papers_prev3y=1200, threshold_crossed="no"),
         dict(constraint_id="C3", companies_count=10, funding_usd_5y=5e7, patents_last3y=5, launches_count=4, papers_last3y=50, papers_prev3y=45, threshold_crossed="no"),
+        dict(constraint_id="C6", companies_count=2, funding_usd_5y=1e6, patents_last3y=1, launches_count=1, papers_last3y=20, papers_prev3y=20, threshold_crossed="no"),
         dict(constraint_id="C4", companies_count=1, funding_usd_5y=1e6, patents_last3y=10, launches_count=1, papers_last3y=300, papers_prev3y=100, threshold_crossed="yes"),
     ]).to_csv(os.path.join(d, "activity.csv"), index=False)
     pd.DataFrame({"year": range(2000, 2027), "cpi": 100.0, "months": 12}).to_csv(os.path.join(d, "cpi.csv"), index=False)
@@ -72,6 +74,15 @@ def main():
         fixture(d)
         run(d, "curves", "--plots")
         run(d, "gap", "--plots")
+        pd.DataFrame([dict(finding="Sensor cost fell", constraint_ids="C1", number="-20%/yr", confidence="B", meaning="test")]).to_csv(
+            os.path.join(d, "findings.csv"), index=False)
+        has_xl = True
+        try:
+            import openpyxl  # noqa: F401
+            run(d, "workbook", "--field", "test field", "--start", "2006", "--end", "2025", "--out", "wb.xlsx")
+            sheets = openpyxl.load_workbook(os.path.join(d, "wb.xlsx")).sheetnames
+        except ImportError:
+            has_xl, sheets = False, []
         run(d, "curves", "--start", "2012", "--end", "2021", "--outdir", "w10")
         cw = pd.read_csv(os.path.join(d, "w10", "curves.csv")).set_index("constraint_id")
         rw = pd.read_csv(os.path.join(d, "w10", "rejected_points.csv"))
@@ -91,6 +102,8 @@ def main():
             "C5 with 3 periods still gets a trend": cv.loc["C5", "annual_change_pct"] < 0,
             "10-year window keeps C1 inside 2012-2021": int(str(cw.loc["C1", "first_period"])[:4]) >= 2012 and int(str(cw.loc["C1", "last_period"])[:4]) <= 2021,
             "points outside the window are rejected with a reason": rw.reject_reason.str.startswith("outside window").sum() > 0,
+            "tightening constraint kept off the matrix": gm.loc["C6", "quadrant"] == "NOT PLACED",
+            "workbook opens on Start here, then Key findings": (not has_xl) or sheets[:2] == ["Start here", "Key findings"],
             "plots written": os.path.exists(os.path.join(d, "plots", "gap_matrix.png")),
         }
     for name, ok in checks.items():

@@ -152,7 +152,7 @@ OpenCode también lee `~/.claude/skills/`, así que una instalación de Claude C
 | Necesita | Para qué |
 |---|---|
 | Búsqueda web y lectura de páginas | Cada número sale de una fuente |
-| Python 3.10+ con `pandas`, `numpy`, `matplotlib` (`scipy` opcional) | El motor de análisis |
+| Python 3.10+ con `pandas`, `numpy`, `matplotlib`, `openpyxl` (`scipy` opcional) | El motor de análisis, sus gráficos y el Excel |
 | Agentes auxiliares (opcional) | Investigación en paralelo y la verificación independiente. Sin ellos trabaja paso a paso y marca la verificación como autoverificada |
 | `OPENALEX_API_KEY` (opcional, [gratis](https://openalex.org)) | Conteo de papers cuando se agota la cuota gratuita compartida. Sin ella esas columnas quedan vacías y el informe lo dice |
 
@@ -239,6 +239,7 @@ python3 paradigma.py cpi                  # promedios anuales del IPC de EE. UU.
 python3 paradigma.py curves --start 2006 --end 2025 --plots   # points.csv -> curves.csv, periods.csv, plots/
 python3 paradigma.py papers --start 2005 --end 2025   # conteo de papers en OpenAlex
 python3 paradigma.py gap --plots          # curvas + actividad -> gap_matrix.csv, plots/gap_matrix.png
+python3 paradigma.py workbook --field "…" --start 2006 --end 2025   # todas las tablas -> .xlsx legible
 ```
 
 Los esquemas de los CSV están en [`SKILL.md`, Appendix B](../skills/paradigma/SKILL.md#appendix-b-csv-schemas).
@@ -296,7 +297,7 @@ paradigma-skill/
 ```
 
 ```bash
-python3 tests/test_engine.py   # deberían salir 13 líneas PASS
+python3 tests/test_engine.py   # deberían salir 15 líneas PASS
 ```
 
 ## Contribuir

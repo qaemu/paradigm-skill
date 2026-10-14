@@ -1,0 +1,13 @@
+finding,constraint_ids,number,confidence,meaning
+Compute got much cheaper,C02,"~66× cheaper per GFLOPS, −19.8%/yr (2006–2025)",B,Running models is no longer the cost problem. The decline is slowing.
+"Cloud storage fell, then stopped",C01,$0.15 → $0.023 per GB-month (2006–2016); flat since Dec 2016,B,"Storing raw machine data is cheap, but do not plan on it getting cheaper."
+Edge AI hardware likely cheaper,C06,$37 → $3.7 per TOPS (2019–2024),C,"Direction is clear, size is not. For vibration data a microcontroller is enough anyway."
+Thermal cameras: not a trend,C04,"One price step in 2014, flat per pixel since",C,"The first pass called this white space. The check withdrew it: 8+ sellers, no continuing fall."
+"Sensor, connectivity and battery prices unknown",C03 C05 C07,No usable price history in public sources,—,The most useful curves for this field could not be built. Paid data would fix this.
+Downtime got more expensive,C08,Automotive $1.34M → $2.3M per hour (2021–2024 surveys),C,More pressure to predict failures. Indicative only: different surveys.
+No wage sign of a skills shortage,C09 C10,"Employment +65% (2006–2023), real wage flat (+0.2%/yr)",B,"The shortage story comes from industry-wide projections, not from mechanic wages."
+Compliance load rising,C14,Machinery Regulation 2027-01-20; Cyber Resilience Act 2027-12-11,—,Connected and AI-based machines will cost more to bring to market in the EU.
+Only open candidate: services on EU Data Act access,C13,"9 compliance-tool vendors, 0 maintenance services found",Low,"Untried, but derived data is excluded and OEMs can refuse on trade-secret grounds."
+Labeled failure data is the bottleneck,C17,"2,756 papers (2023–25) vs 5 companies",Low,"Research is far ahead of companies, but the constraint itself has not loosened."
+OEM control of data: blocked,C19,Anti-lock-in selling only in wind and elevators,Medium,Watch list. Service agreements and data access did not open up 2018–2022.
+ROI claims: hype risk,C20,95% positive ROI claim with no method; no insurer discount found,Medium,"Buyers lack independent proof. Many sellers, little evidence."

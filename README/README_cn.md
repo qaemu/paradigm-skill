@@ -152,7 +152,7 @@ OpenCode 也会读取 `~/.claude/skills/`，因此在 Claude Code 中安装的�
 | 需要 | 用途 |
 |---|---|
 | 网页搜索和页面抓取 | 每个数字都来自某个来源 |
-| Python 3.10+，以及 `pandas`、`numpy`、`matplotlib`（`scipy` 可选） | 分析引擎 |
+| Python 3.10+，以及 `pandas`、`numpy`、`matplotlib`、`openpyxl`（`scipy` 可选） | 分析引擎、图表和 Excel 工作簿 |
 | 辅助智能体（可选） | 并行研究和独立核查。没有它们时会逐步执行，并将核查标注为自行核查 |
 | `OPENALEX_API_KEY`（可选，[免费](https://openalex.org)） | 共享免费额度用完后用于统计论文数量。没有它时这些列留空，报告中会说明 |
 
@@ -239,6 +239,7 @@ python3 paradigma.py cpi                  # 从 FRED 获取美国 CPI 年均值
 python3 paradigma.py curves --start 2006 --end 2025 --plots   # points.csv -> curves.csv, periods.csv, plots/
 python3 paradigma.py papers --start 2005 --end 2025   # OpenAlex 论文数量
 python3 paradigma.py gap --plots          # 曲线 + 活动 -> gap_matrix.csv, plots/gap_matrix.png
+python3 paradigma.py workbook --field "…" --start 2006 --end 2025   # 所有表格 -> 易读的 .xlsx
 ```
 
 CSV 结构说明见 [`SKILL.md` 附录 B（Appendix B）](../skills/paradigma/SKILL.md#appendix-b-csv-schemas)。
@@ -296,7 +297,7 @@ paradigma-skill/
 ```
 
 ```bash
-python3 tests/test_engine.py   # 应输出 13 行 PASS
+python3 tests/test_engine.py   # 应输出 15 行 PASS
 ```
 
 ## 参与贡献

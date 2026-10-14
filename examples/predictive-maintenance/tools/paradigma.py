@@ -6,9 +6,10 @@ Subcommands
   curves  Robust cost/performance curves from points.csv (+ constraints.csv, cpi.csv)
   gap     Gap matrix from curves.csv + activity.csv (+ constraints.csv)
   papers  Yearly paper counts from OpenAlex for each query in queries.csv
+  workbook Readable Excel workbook (Start here, Key findings, every table with sources)
 
 Run `python3 paradigma.py <cmd> -h` for options. Only pandas, numpy, matplotlib
-are required; scipy is used when present.
+are required; scipy is used when present; openpyxl is needed for `workbook`.
 """
 import argparse
 import csv
@@ -241,42 +242,168 @@ def cmd_curves(a):
         plot_curves(d, pd.DataFrame(per_rows), cv, cons, a.outdir, base_year)
 
 
-def plot_curves(d, per, cv, cons, outdir, base_year):
+# ------------------------------------------------------------------- style
+# One look for every chart: white page, blush plot area, near-black ink, one pink accent.
+INK, MUTED, DEEP, PINK, ROSE, BLUSH, GRIDC = "#111111", "#55555E", "#C9406B", "#EE9AB3", "#F7CFDB", "#FFF6F8", "#E9C9D3"
+WHYNOT_STYLE = {"BLOCKED": (DEEP, "Blocked: something still stands in the way"),
+                "UNTRIED": (INK, "Untried: nobody has seriously built on it yet"),
+                "TRIED TOO EARLY": (PINK, "Tried too early: failed before the constraint fell"),
+                "N/A-CROWDED": (ROSE, "Crowded: many serious builders already"),
+                "": ("#C4C4CC", "Not checked")}
+
+
+def _mpl():
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+    plt.rcParams.update({"font.size": 10, "axes.edgecolor": "#BBBBC2", "axes.labelcolor": INK,
+                         "xtick.color": MUTED, "ytick.color": MUTED, "axes.titleweight": "bold"})
+    return plt
+
+
+def plot_curves(d, per, cv, cons, outdir, base_year):
+    plt = _mpl()
+    from matplotlib.ticker import MaxNLocator
     names = dict(zip(cons.get("constraint_id", []), cons.get("name", []))) if len(cons) else {}
     units = dict(zip(cons.get("constraint_id", []), cons.get("unit", []))) if len(cons) else {}
     os.makedirs(os.path.join(outdir, "plots"), exist_ok=True)
     for (cid, tier), g in d.groupby(["constraint_id", "tier"]):
-        fig, ax = plt.subplots(figsize=(7, 4))
-        ax.scatter(g.t, g.value_real, s=12, alpha=.4, color="#888", label="data points")
+        fig, ax = plt.subplots(figsize=(8, 4.6), facecolor="white")
+        ax.set_facecolor(BLUSH)
+        ax.grid(color=GRIDC, lw=0.8, which="major")
+        ax.grid(color=GRIDC, lw=0.4, which="minor", alpha=.6)
+        ax.scatter(g.t, g.value_real, s=16, color="#9A9AA3", alpha=.75, label="data points", zorder=2)
         p = per[(per.constraint_id == cid) & (per.tier == tier)]
-        ax.plot(p.pt, p["median"], "o-", color="#2a6", label="period median")
+        ax.plot(p.pt, p["median"], "o-", color=DEEP, lw=2, ms=5, mfc="white", mew=1.6, label="yearly median", zorder=3)
         c = cv[(cv.constraint_id == cid) & (cv.tier == tier)]
-        if len(c) and not pd.isna(c.iloc[0].get("fitted_start", np.nan)):
-            x0, x1 = p.pt.min(), p.pt.max()
-            ax.plot([x0, x1], [c.iloc[0].fitted_start, c.iloc[0].fitted_end], "--", color="#c33",
-                    label=f"robust trend {c.iloc[0].annual_change_pct:+.1f}%/yr")
+        sub = ""
+        if len(c):
+            r = c.iloc[0]
+            if not pd.isna(r.get("fitted_start", np.nan)):
+                x0, x1 = p.pt.min(), p.pt.max()
+                ax.plot([x0, x1], [r.fitted_start, r.fitted_end], "--", color=INK, lw=1.4,
+                        label=f"robust trend {r.annual_change_pct:+.1f}%/yr", zorder=4)
+                sub = (f"{r.annual_change_pct:+.1f}% per year (95% range {r.annual_change_ci_low_pct:+.1f} to "
+                       f"{r.annual_change_ci_high_pct:+.1f}) · grade {r.grade} · {int(r.n_points)} points, {int(r.n_sources)} sources")
+            else:
+                sub = f"too few years for a trend · grade {r.get('grade', 'D')} · {int(r.n_points)} points"
         ax.set_yscale("log")
-        from matplotlib.ticker import MaxNLocator
+        from matplotlib.ticker import FuncFormatter, LogLocator, NullFormatter
+        ax.yaxis.set_major_locator(LogLocator(base=10, subs=(1.0, 2.0, 5.0)))
+        ax.yaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:,.6g}"))
+        ax.yaxis.set_minor_formatter(NullFormatter())
         ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-        ax.set_title(f"{names.get(cid, cid)} [{tier}]")
         unit = units.get(cid, "")
-        ax.set_ylabel(f"{unit} ({base_year} USD)" if base_year else unit)
-        ax.legend(fontsize=8)
-        ax.grid(alpha=.3, which="both")
-        fig.tight_layout()
-        fig.savefig(os.path.join(outdir, "plots", f"curve_{cid}_{tier}.png"), dpi=130)
+        money = "USD" in str(unit).upper() or "$" in str(unit)
+        ax.set_ylabel(f"{unit} ({base_year} dollars)" if (base_year and money) else unit)
+        for sp in ("top", "right"):
+            ax.spines[sp].set_visible(False)
+        ax.legend(fontsize=8.5, frameon=False, loc="best")
+        fig.text(0.01, 0.97, f"{cid} {names.get(cid, cid)}", fontsize=12.5, fontweight="bold", color=INK, va="top")
+        fig.text(0.01, 0.905, f"series: {tier}" + (f" · {sub}" if sub else ""), fontsize=8.8, color=MUTED, va="top")
+        fig.subplots_adjust(left=0.1, right=0.98, top=0.84, bottom=0.1)
+        fig.savefig(os.path.join(outdir, "plots", f"curve_{cid}_{tier}.png"), dpi=150,
+                    bbox_inches="tight", pad_inches=0.25, facecolor="white")
         plt.close(fig)
+
+
+def plot_gap(df, cut, outdir, title, whynot):
+    """Gap matrix with ID labels on the dots and a key beside the chart. Nothing is clipped."""
+    import textwrap
+    plt = _mpl()
+    s = df.dropna(subset=["drop_score", "activity_score"]).copy()
+    lab = {cid: str(whynot.get(cid, "")).strip().upper() for cid in s.constraint_id}
+    n = len(s)
+    rows_per_col = 16
+    ncols = 1 if n <= rows_per_col else 2
+    key_w = 0.37 if ncols == 1 else 0.52
+    fig_w = 13 if ncols == 1 else 16
+    fig_h = max(7.6, 0.5 + 0.42 * min(n, rows_per_col) + 3.2)
+    fig = plt.figure(figsize=(fig_w, fig_h), facecolor="white")
+    ax_w = 0.95 - key_w - 0.1
+    ax = fig.add_axes([0.07, 0.13, ax_w, 0.74])
+    ax.set_facecolor(BLUSH)
+    ax.axvline(cut, color=GRIDC, lw=1.3)
+    ax.axhline(cut, color=GRIDC, lw=1.3)
+    for t, (x, yt, ys, ha, col, sub) in {
+            "WHITE SPACE": (.02, .97, .925, "left", DEEP, "fell, few building"),
+            "CROWDED": (.98, .97, .925, "right", MUTED, "fell, many building"),
+            "DORMANT": (.02, .075, .03, "left", MUTED, "little change, few building"),
+            "HYPE RISK": (.98, .075, .03, "right", MUTED, "little change, many building")}.items():
+        va = "top" if yt > .5 else "bottom"
+        ax.text(x, yt, t, transform=ax.transAxes, ha=ha, va=va, fontsize=11, fontweight="bold", color=col)
+        ax.text(x, ys, sub, transform=ax.transAxes, ha=ha, va=va, fontsize=8.5, color=MUTED)
+    # spread dots that sit on the same spot so every label stays readable
+    s["px"], s["py"] = s.activity_score.astype(float), s.drop_score.astype(float)
+    for _, grp in s.groupby([s.px.round(2), s.py.round(2)]):
+        if len(grp) > 1:
+            offs = np.linspace(-0.025 * (len(grp) - 1), 0.025 * (len(grp) - 1), len(grp))
+            s.loc[grp.index, "px"] = grp.px + offs
+    for _, r in s.iterrows():
+        col = WHYNOT_STYLE.get(lab[r.constraint_id], WHYNOT_STYLE[""])[0]
+        ax.scatter(r.px, r.py, s=190, color=col, edgecolor=INK, linewidth=1.2, zorder=3)
+        ax.annotate(r.constraint_id, (r.px, r.py), xytext=(0, 12), textcoords="offset points",
+                    ha="center", fontsize=10, fontweight="bold", color=INK)
+    ax.set_xlim(-.06, 1.06)
+    ax.set_ylim(-.06, 1.12)
+    ax.set_xlabel("How many are building on it  →\n(percentile of companies, funding and launches)", fontsize=10)
+    ax.set_ylabel("How far the constraint fell  →\n(percentile)", fontsize=10)
+    fig.text(0.07, 0.95, title, fontsize=14, fontweight="bold", color=INK)
+    # key
+    k = fig.add_axes([0.07 + ax_w + 0.04, 0.05, key_w, 0.86])
+    k.axis("off"); k.set_xlim(0, 1); k.set_ylim(0, 1)
+    k.text(0, 0.985, "Constraints on the chart", fontsize=11.5, fontweight="bold", color=INK, va="top")
+    step = min(0.052, 0.58 / max(1, min(n, rows_per_col)))
+    colw = 1.0 / ncols
+    namew = 34 if ncols == 1 else 30
+    for i, (_, r) in enumerate(s.sort_values("constraint_id").iterrows()):
+        cx = (i // rows_per_col) * colw
+        y = 0.92 - (i % rows_per_col) * step
+        col = WHYNOT_STYLE.get(lab[r.constraint_id], WHYNOT_STYLE[""])[0]
+        k.scatter([cx + 0.02], [y], s=100, color=col, edgecolor=INK, linewidth=1, clip_on=False)
+        k.text(cx + 0.07 * (1 if ncols == 1 else 0.75), y, r.constraint_id, fontsize=9.5, fontweight="bold", color=INK, va="center")
+        nm = str(r.get("short_name", "") or "").strip()
+        nm = nm if nm and nm != "nan" else str(r["name"])
+        nm = nm if len(nm) <= namew else nm[:namew - 1].rstrip() + "…"
+        k.text(cx + 0.18 * (1 if ncols == 1 else 0.6), y, nm, fontsize=9.5, color=INK, va="center")
+    y = 0.92 - min(n, rows_per_col) * step - 0.03
+    k.text(0, y, "Dot colour = result of the why-not check", fontsize=9.5, fontweight="bold", color=INK, va="center")
+    y -= 0.045
+    for key in ("BLOCKED", "UNTRIED", "TRIED TOO EARLY", "N/A-CROWDED", ""):
+        col, txt = WHYNOT_STYLE[key]
+        k.scatter([0.02], [y], s=80, color=col, edgecolor=INK, linewidth=1, clip_on=False)
+        k.text(0.07 if ncols == 1 else 0.05, y, txt, fontsize=9, color=INK, va="center")
+        y -= 0.038
+    off = df[df.drop_score.isna() | df.activity_score.isna()]
+    if len(off):
+        parts = []
+        for _, r in off.iterrows():
+            why = str(r.get("not_placed_reason", "") or "").strip()
+            if not why or why == "nan":
+                why = "no measured change" if pd.isna(r.drop_score) else "no activity data"
+            parts.append(f"{r.constraint_id} ({why})")
+        note = "Not on the chart: " + "; ".join(parts) + "."
+        wrap = 66 if ncols == 1 else 95
+        k.text(0, y - 0.02, "\n".join(textwrap.wrap(note, wrap)), fontsize=8.6, color=MUTED, va="top", linespacing=1.35)
+    os.makedirs(os.path.join(outdir, "plots"), exist_ok=True)
+    fig.savefig(os.path.join(outdir, "plots", "gap_matrix.png"), dpi=150, bbox_inches="tight", pad_inches=0.35, facecolor="white")
+    plt.close(fig)
 
 
 # --------------------------------------------------------------------- gap
 def cmd_gap(a):
-    cons = pd.read_csv(a.constraints, dtype=str).fillna("")
+    cons_all = pd.read_csv(a.constraints, dtype=str).fillna("")
     act = pd.read_csv(a.activity)
     cv = pd.read_csv(a.curves) if os.path.exists(a.curves) else pd.DataFrame()
-    df = cons[["constraint_id", "name", "family"]].copy()
+    # Only loosening constraints compete for white space. Tightening, mixed or pressure constraints, and any row
+    # with an exclude_reason, are kept out of the percentile ranking and listed under the chart instead.
+    direction = cons_all.get("direction", pd.Series([""] * len(cons_all))).str.lower().str.strip()
+    excl = cons_all.get("exclude_reason", pd.Series([""] * len(cons_all))).str.strip()
+    out = direction.isin(["tightening", "mixed", "pressure"]) | (excl != "")
+    reason = np.where(excl != "", excl, direction + ", not an enabler")
+    cons = cons_all[~out]
+    left_out = cons_all[out].assign(not_placed_reason=reason[out.values])
+    df = cons[["constraint_id", "name", "family"] + (["short_name"] if "short_name" in cons else [])].copy()
 
     # improvement score: measured curves -> log10(improvement_fold) per decade; qualitative 0-3 otherwise
     imp = {}
@@ -335,33 +462,21 @@ def cmd_gap(a):
     if "research_ahead_score" in df:
         df["gap_score"] = (df.gap_score * (0.8 + 0.4 * df.research_ahead_score.fillna(0.5))).round(3)
     df = df.sort_values("gap_score", ascending=False)
+    if len(left_out):
+        lo = left_out[["constraint_id", "name", "family", "not_placed_reason"]].merge(act, on="constraint_id", how="left")
+        lo["quadrant"] = "NOT PLACED"
+        df = pd.concat([df, lo], ignore_index=True)
     df.to_csv(os.path.join(a.outdir, "gap_matrix.csv"), index=False)
     cols = ["constraint_id", "name", "drop_score", "activity_score", "gap_score", "quadrant"]
     print(df[[c for c in cols if c in df]].to_string(index=False))
 
     if a.plots:
-        import matplotlib
-        matplotlib.use("Agg")
-        import matplotlib.pyplot as plt
-        s = df.dropna(subset=["drop_score", "activity_score"])
-        fig, ax = plt.subplots(figsize=(8, 6))
-        ax.axvline(a.cut, color="#bbb", lw=1); ax.axhline(a.cut, color="#bbb", lw=1)
-        ax.scatter(s.activity_score, s.drop_score, s=60, color="#2a6")
-        for _, r in s.iterrows():
-            ax.annotate(r["name"][:28], (r.activity_score, r.drop_score), fontsize=7,
-                        xytext=(4, 3), textcoords="offset points")
-        ax.text(0.02, 0.98, "WHITE SPACE", transform=ax.transAxes, va="top", fontsize=9, color="#2a6")
-        ax.text(0.98, 0.98, "CROWDED", transform=ax.transAxes, va="top", ha="right", fontsize=9, color="#777")
-        ax.text(0.98, 0.02, "HYPE RISK", transform=ax.transAxes, ha="right", fontsize=9, color="#c33")
-        ax.text(0.02, 0.02, "DORMANT", transform=ax.transAxes, fontsize=9, color="#777")
-        ax.set_xlabel("Activity score (percentile: companies, funding, patents, launches)")
-        ax.set_ylabel("Drop score (percentile: how much the constraint fell)")
-        ax.set_xlim(-0.05, 1.05); ax.set_ylim(-0.05, 1.05)
-        ax.set_title("PARADIGMA gap matrix")
-        fig.tight_layout()
-        os.makedirs(os.path.join(a.outdir, "plots"), exist_ok=True)
-        fig.savefig(os.path.join(a.outdir, "plots", "gap_matrix.png"), dpi=140)
-        plt.close(fig)
+        wn = {}
+        if a.whynot and os.path.exists(a.whynot):
+            w = pd.read_csv(a.whynot, dtype=str).fillna("")
+            wn = dict(zip(w.constraint_id, w.label))
+        title = a.title or "Gap matrix"
+        plot_gap(df, a.cut, a.outdir, title, wn)
 
 
 # ------------------------------------------------------------------ papers
@@ -397,6 +512,370 @@ def cmd_papers(a):
     print(summ.to_string())
 
 
+# ---------------------------------------------------------------- workbook
+GLOSSARY = [
+    ("Constraint", "Anything that limits what the field can do: a price, a performance level, a law, a patent, a skill shortage, a norm, a supply problem."),
+    ("Fell / loosening", "The constraint got weaker (cheaper, faster, legal, allowed). Something may have just become possible."),
+    ("Tightening", "The constraint got stronger (more expensive, more regulated, scarcer)."),
+    ("Fold change", "How many times cheaper or better something got. 10× means it now costs a tenth."),
+    ("Change per year (%)", "Typical yearly change, computed with a method that ignores outliers (Theil–Sen). The low and high values are the 95% range."),
+    ("Real USD", "Prices adjusted for inflation to the latest full year's dollars, so years can be compared."),
+    ("Grade A–D", "How much to trust a curve. A and B: enough points and sources. C: usable but weak. D: too little data, no trend computed."),
+    ("Drop score", "0 to 1. How far a constraint fell compared with the others in this run."),
+    ("Activity score", "0 to 1. How many companies, how much funding and how many launches build on it, compared with the others."),
+    ("White space", "Fell a lot, few building. A possible opening, but only after the why-not check."),
+    ("Crowded", "Fell a lot, many already building."),
+    ("Hype risk", "Little real change, but many building anyway."),
+    ("Dormant", "Little change and little activity."),
+    ("Not placed", "Left off the gap matrix on purpose: it tightened, it is a pressure rather than an enabler, or it could not be measured."),
+    ("Untried", "Nobody has seriously built on it yet."),
+    ("Tried too early", "Someone failed before the constraint fell. Could work now."),
+    ("Blocked", "Something else still stands in the way. Goes to a watch list, not to white space."),
+    ("Company status", "announced = press release, funding round or pilot only. deployed = named customers or installations. paying = evidence of revenue."),
+    ("Consensus", "yes = widely covered, well funded or a big incumbent. no = less known."),
+    ("Verification", "Separate agents that did not collect the data re-opened each source. MATCH = the page shows it. MISMATCH = it does not (then corrected). UNVERIFIABLE = the page could not be opened."),
+]
+
+TAGS = {  # value -> (fill, text colour); dark text on light fills keeps contrast high
+    "MATCH": ("DCF2E1", "14532D"), "MISMATCH": ("FAD7DC", "7F1D1D"), "UNVERIFIABLE": ("FFF0BF", "6B3A0A"),
+    "loosening": ("DCF2E1", "14532D"), "tightening": ("FAD7DC", "7F1D1D"), "mixed": ("FFF0BF", "6B3A0A"), "pressure": ("FFF0BF", "6B3A0A"),
+    "WHITE SPACE": ("FBE0E8", "8A1C3F"), "CROWDED": ("E3E8F0", "1F2937"), "HYPE RISK": ("FFF0BF", "6B3A0A"),
+    "DORMANT": ("ECECEF", "374151"), "UNSCORED": ("FFFFFF", "4B4B55"), "NOT PLACED": ("FFFFFF", "4B4B55"),
+    "UNTRIED": ("DBE7FE", "1E3A8A"), "BLOCKED": ("FAD7DC", "7F1D1D"), "N/A-CROWDED": ("E3E8F0", "1F2937"),
+    "TRIED TOO EARLY": ("FFF0BF", "6B3A0A"),
+    "paying": ("DCF2E1", "14532D"), "deployed": ("DBE7FE", "1E3A8A"), "announced": ("ECECEF", "374151"),
+    "A": ("DCF2E1", "14532D"), "B": ("DCF2E1", "14532D"), "C": ("FFF0BF", "6B3A0A"), "D": ("FAD7DC", "7F1D1D"),
+    "High": ("DCF2E1", "14532D"), "Medium": ("DBE7FE", "1E3A8A"), "Low": ("FFF0BF", "6B3A0A"),
+    "improved >=10x": ("DCF2E1", "14532D"), "improving": ("DCF2E1", "14532D"),
+    "flat / unclear": ("ECECEF", "374151"), "worsening (constraint tightening)": ("FAD7DC", "7F1D1D"),
+    "enacted": ("ECECEF", "374151"), "proposed": ("FFF0BF", "6B3A0A"), "expiring": ("FFF0BF", "6B3A0A"), "expired": ("ECECEF", "374151"),
+}
+
+
+def _tag(v):
+    v = str(v).strip()
+    if v in TAGS:
+        return TAGS[v]
+    for k in ("WHITE SPACE", "CROWDED", "HYPE RISK", "DORMANT"):
+        if v.startswith(k):
+            return TAGS[k]
+    if v[:1] in "ABCD" and v[1:2] in (" ", "("):
+        return TAGS[v[0]]
+    return None
+
+
+def _lines(text, width):
+    if text is None or str(text) == "":
+        return 1
+    per_line = max(4, width * 1.15)
+    return sum(max(1, math.ceil(len(part) / per_line)) for part in str(text).split("\n"))
+
+
+def cmd_workbook(a):
+    """Readable Excel workbook for a reader with no background in market research."""
+    try:
+        from openpyxl import Workbook
+        from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
+        from openpyxl.utils import get_column_letter
+    except ImportError:
+        sys.exit("workbook needs openpyxl: pip install openpyxl")
+
+    def R(f):
+        return pd.read_csv(f, dtype=str).fillna("") if os.path.exists(f) else pd.DataFrame()
+
+    F = "Arial"
+    head_fill = PatternFill("solid", fgColor="1F2430")
+    zebra = PatternFill("solid", fgColor="F3F4F7")
+    side = Side(style="thin", color="9CA0AA")
+    border = Border(left=side, right=side, top=side, bottom=side)
+    f_body, f_head = Font(name=F, size=10, color="111111"), Font(name=F, size=10, bold=True, color="FFFFFF")
+    f_link, f_bold = Font(name=F, size=10, color="1D4ED8", underline="single"), Font(name=F, size=10, bold=True, color="111111")
+    f_muted = Font(name=F, size=10, color="4B4B55")
+
+    def fit(ws, landscape=True):
+        ws.page_setup.orientation = "landscape" if landscape else "portrait"
+        ws.page_setup.paperSize = ws.PAPERSIZE_A4
+        ws.sheet_properties.pageSetUpPr.fitToPage = True
+        ws.page_setup.fitToWidth = 1
+        ws.page_setup.fitToHeight = 0
+
+    def table(wb, name, df, cols, intro=None, tab=None):
+        """cols: (source column, header, width, kind); kind in text|num|score|int|usd|pct|url|tag."""
+        ws = wb.create_sheet(name[:31])
+        if tab:
+            ws.sheet_properties.tabColor = tab
+        r0 = 1
+        if intro:
+            c = ws.cell(1, 1, intro)
+            c.font = Font(name=F, size=10, italic=True, color="4B4B55")
+            c.alignment = Alignment(wrap_text=True, vertical="top")
+            ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=len(cols))
+            ws.row_dimensions[1].height = 15 * _lines(intro, sum(c[2] for c in cols)) + 6
+            r0 = 3
+        for j, (_, head, width, _) in enumerate(cols, 1):
+            c = ws.cell(r0, j, head)
+            c.font, c.fill, c.border = f_head, head_fill, border
+            c.alignment = Alignment(wrap_text=True, vertical="center")
+            ws.column_dimensions[get_column_letter(j)].width = width
+        ws.row_dimensions[r0].height = 15 * max(_lines(h, w) for _, h, w, _ in cols) + 8
+        if df is None or df.empty:
+            ws.cell(r0 + 1, 1, "No data for this sheet in this run.").font = f_muted
+            fit(ws)
+            return ws
+        for i, (_, row) in enumerate(df.iterrows(), 1):
+            r, lines = r0 + i, 1
+            for j, (src, _, width, kind) in enumerate(cols, 1):
+                v = row[src] if src in row.index else ""
+                c = ws.cell(r, j)
+                c.border, c.font = border, f_body
+                c.alignment = Alignment(wrap_text=True, vertical="top")
+                if i % 2 == 0:
+                    c.fill = zebra
+                if v is None or str(v) in ("", "nan"):
+                    continue
+                if kind in ("num", "score", "int", "usd", "pct"):
+                    try:
+                        c.value = float(str(v).replace(",", ""))
+                        c.number_format = {"num": "#,##0.00##", "score": "0.00", "int": "#,##0",
+                                           "usd": "$#,##0", "pct": '0.0"%"'}[kind]
+                        c.alignment = Alignment(vertical="top", horizontal="right")
+                    except ValueError:
+                        c.value = v
+                elif kind == "url":
+                    urls = [u for u in str(v).split() if u.startswith("http")]
+                    if urls:
+                        c.value = "Open source" + (f" (+{len(urls) - 1} more)" if len(urls) > 1 else "")
+                        c.hyperlink, c.font = urls[0], f_link
+                    else:
+                        c.value = v
+                else:
+                    c.value = v
+                    lines = max(lines, _lines(v, width))
+                    if kind == "tag" and _tag(v):
+                        fill, ink = _tag(v)
+                        c.fill = PatternFill("solid", fgColor=fill)
+                        c.font = Font(name=F, size=10, bold=True, color=ink)
+            ws.row_dimensions[r].height = min(15 * lines + 4, 409)
+        ws.auto_filter.ref = f"A{r0}:{get_column_letter(len(cols))}{r0 + len(df)}"
+        ws.freeze_panes = ws.cell(r0 + 1, 2)
+        fit(ws)
+        return ws
+
+    cons = R(a.constraints)
+    names = dict(zip(cons.get("constraint_id", []), cons.get("name", [])))
+    lab = lambda cid: f"{cid} {names.get(cid, '')}".strip()
+    findings, gap, wn, cv, per = R("findings.csv"), R("gap_matrix.csv"), R("whynot.csv"), R("curves.csv"), R("periods.csv")
+    pts, nc, co, fe, act = R(a.points), R("noncost.csv"), R("companies.csv"), R("funding_events.csv"), R("activity.csv")
+    fail, absn, ver, review = R("failures.csv"), R("absence.csv"), R("verification.csv"), R("curve_review.csv")
+    window = f"{a.start}–{a.end}" if a.start and a.end else "see report"
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Start here"
+    ws.sheet_properties.tabColor = "C9406B"
+    ws.column_dimensions["A"].width, ws.column_dimensions["B"].width = 26, 100
+    state = {"row": 1}
+
+    def put(x, y="", style="pair"):
+        r = state["row"]
+        ca, cb = ws.cell(r, 1, x), ws.cell(r, 2, y)
+        for c in (ca, cb):
+            c.alignment, c.font = Alignment(wrap_text=True, vertical="top"), f_body
+        if style == "title":
+            ca.font = Font(name=F, size=16, bold=True, color="111111")
+            ws.merge_cells(start_row=r, start_column=1, end_row=r, end_column=2)
+            ws.row_dimensions[r].height = 28
+        elif style == "section":
+            ca.font = Font(name=F, size=12, bold=True, color="FFFFFF")
+            ca.fill = cb.fill = head_fill
+            ca.alignment = Alignment(vertical="center")
+            ws.merge_cells(start_row=r, start_column=1, end_row=r, end_column=2)
+            ws.row_dimensions[r].height = 22
+        elif style == "note":
+            ca.font = f_muted
+            ws.merge_cells(start_row=r, start_column=1, end_row=r, end_column=2)
+            ws.row_dimensions[r].height = 15 * _lines(x, 126) + 6
+        else:
+            ca.font = f_bold
+            ca.border = cb.border = border
+            ws.row_dimensions[r].height = 15 * max(_lines(y, 100), _lines(x, 26)) + 6
+        state["row"] += 1
+
+    put(f"PARADIGMA: {a.field or 'field scan'}", style="title")
+    put(f"Run date {a.date or ''} · region {a.region or 'global'} · window {window} · {len(cons)} constraints. "
+        "This workbook holds every number behind the report, with a link to where it came from.", style="note")
+    state["row"] += 1
+    put("What this is", style="section")
+    put("PARADIGMA asks one question about a field: which of the things that limit it (prices, performance, laws, patents, skills, "
+        "norms, supply) changed over the chosen years, who is already building on each change, and where something changed but "
+        "almost nobody is building yet. A limit that fell but nobody uses yet is a possible opening, called white space.", style="note")
+    state["row"] += 1
+    put("Read it in 5 minutes", style="section")
+    for x, y in [("1. Key findings", "The plain-language results. Start here."),
+                 ("2. Gap matrix", "Each constraint scored on how far it fell and how many are building on it. The quadrant says what that combination means."),
+                 ("3. Why-not check", "For each possible opening: did someone already try and fail, or is something still blocking it?"),
+                 ("4. Constraints", "The limits that were studied and why each matters to the field."),
+                 ("5. Everything else", "The evidence: price curves, data points, laws, companies, funding, and the independent verification of each claim.")]:
+        put(x, y)
+    state["row"] += 1
+    put("Words used in this workbook", style="section")
+    for x, y in GLOSSARY:
+        put(x, y)
+    state["row"] += 1
+    put("Sheets", style="section")
+    for x, y in [("Key findings", "Plain-language results with confidence."), ("Gap matrix", "Scores and quadrant per constraint."),
+                 ("Why-not check", "Failed attempts and remaining blockers for each candidate."),
+                 ("Constraints", "What each constraint measures and the change scores."), ("Price curves", "Trend per series: change per year, fold change, grade."),
+                 ("Yearly medians", "The median value per year behind each curve."), ("Data points", "Every price or performance number, with its source."),
+                 ("Laws & timeline", "Laws, standards, patents and supply events, sorted by date."), ("Companies", "Who builds on each constraint, with status and evidence."),
+                 ("Funding rounds", "Disclosed rounds in the activity window."), ("Activity", "Counts per constraint: companies, funding, papers."),
+                 ("Failures & exits", "Companies that shut down, retreated or sold."), ("Searches, no result", "Searches that found nothing relevant (evidence of absence)."),
+                 ("Verification", "The independent re-check of each claim.")]:
+        put(x, y)
+    ws.freeze_panes = "A2"
+    fit(ws, landscape=False)
+
+    table(wb, "Key findings", findings, [
+        ("finding", "Finding", 34, "text"), ("constraint_ids", "Constraint", 11, "text"), ("number", "The number", 46, "text"),
+        ("confidence", "Confidence (grade)", 12, "tag"), ("meaning", "What it means", 62, "text")],
+        intro="The results in plain words. Each row points to a constraint ID you can look up in the other sheets.", tab="C9406B")
+
+    if not gap.empty:
+        gap = gap.copy()
+        gap["constraint"] = gap.constraint_id.map(lab)
+        gap["quad"] = gap.quadrant.str.split(" \\(").str[0]
+        gap["why"] = gap.constraint_id.map(dict(zip(wn.get("constraint_id", []), wn.get("label", []))))
+    table(wb, "Gap matrix", gap, [
+        ("constraint", "Constraint", 44, "text"), ("drop_score", "How far it fell (0–1)", 13, "score"),
+        ("activity_score", "How many build on it (0–1)", 14, "score"), ("gap_score", "Opening score (higher = more open)", 15, "score"),
+        ("quad", "Quadrant", 15, "tag"), ("why", "Why-not result", 15, "tag"), ("not_placed_reason", "Why not placed", 24, "text"),
+        ("companies_count", "Companies found", 11, "int"), ("funding_usd_5y", "Funding to those companies", 16, "usd"),
+        ("papers_last3y", "Research papers, last 3 years", 12, "int"), ("papers_prev3y", "Research papers, 3 years before", 12, "int")],
+        intro="Quadrants come from the two 0–1 scores. UNSCORED means one of the two signals is missing. NOT PLACED means the constraint tightened, is a pressure, or could not be measured.", tab="1F2430")
+
+    if not wn.empty:
+        wn = wn.copy()
+        wn["constraint"] = wn.constraint_id.map(lab)
+    table(wb, "Why-not check", wn, [
+        ("constraint", "Constraint", 30, "text"), ("label", "Result", 14, "tag"), ("failed_attempts", "Who tried and what happened", 60, "text"),
+        ("blockers", "What still blocks it", 60, "text"), ("blocker_trend", "Are the blockers falling?", 36, "text"),
+        ("source_urls", "Source", 16, "url"), ("note", "Notes", 50, "text")],
+        intro="Only Untried and Tried too early count as white space. Blocked goes to a watch list.")
+
+    c2 = cons.copy()
+    if not c2.empty:
+        q = c2.get("qualitative_change_0to3", pd.Series([""] * len(c2)))
+        c2["score"] = q
+    table(wb, "Constraints", c2, [
+        ("constraint_id", "ID", 7, "text"), ("name", "Constraint", 36, "text"), ("family", "Type", 11, "text"),
+        ("unit", "Measured in", 18, "text"), ("better", "Better when", 9, "text"), ("why_it_matters", "Why it matters", 44, "text"),
+        ("direction", "Direction", 13, "tag"), ("exclude_reason", "Left off the matrix because", 24, "text"),
+        ("score", "Change score 0–3 (if not measured)", 13, "int"), ("qualitative_justification", "Reason for the score", 70, "text")],
+        intro="0 = no change, 1 = minor, 2 = significant, 3 = a hard barrier was removed (or added, if tightening).")
+
+    if not cv.empty:
+        cv = cv.copy()
+        cv["constraint"] = cv.constraint_id.map(lab)
+        cv["years"] = cv.first_period.astype(str) + "–" + cv.last_period.astype(str)
+        cv["review"] = ""
+        if not review.empty:
+            for _, rv in review.iterrows():
+                m = (cv.constraint_id == rv.get("constraint_id", "")) & ((cv.tier == rv.get("tier", "")) | (rv.get("tier", "") == ""))
+                if rv.get("grade_override", ""):
+                    cv.loc[m, "grade"] = f"{rv.grade_override} (engine said " + cv.loc[m, "grade"].astype(str) + ")"
+                cv.loc[m, "review"] = rv.get("note", "")
+    table(wb, "Price curves", cv, [
+        ("constraint", "Constraint", 32, "text"), ("tier", "Series", 20, "text"), ("years", "Years", 11, "text"),
+        ("n_points", "Data points", 8, "int"), ("n_sources", "Sources", 8, "int"), ("annual_change_pct", "Change per year %", 11, "pct"),
+        ("annual_change_ci_low_pct", "Range low %", 10, "pct"), ("annual_change_ci_high_pct", "Range high %", 10, "pct"),
+        ("improvement_fold", "Times better over the period (1 = no change)", 14, "num"), ("class", "Verdict", 18, "tag"),
+        ("trend_shape", "Speeding up or slowing?", 13, "text"), ("grade", "Grade", 12, "tag"), ("review", "Reviewer note", 46, "text")],
+        intro="Negative change per year means the price fell. Times better below 1 means the constraint tightened. Grade D rows had too little data for a trend.")
+
+    if not per.empty:
+        per = per.copy()
+        per["constraint"] = per.constraint_id.map(lab)
+    table(wb, "Yearly medians", per, [
+        ("constraint", "Constraint", 32, "text"), ("tier", "Series", 20, "text"), ("period", "Year", 8, "text"),
+        ("n", "Points that year", 9, "int"), ("median", "Median (real USD or unit)", 14, "num"), ("q1", "Lower quartile", 12, "num"),
+        ("q3", "Upper quartile", 12, "num"), ("sources", "Sources", 8, "int"), ("low_confidence", "Fewer than 3 points?", 11, "text")],
+        intro="One row per series and year. Money values are inflation-adjusted.")
+
+    if not pts.empty:
+        pts = pts.copy()
+        pts["constraint"] = pts.constraint_id.map(lab)
+        if "row_id" not in pts:
+            pts["row_id"] = [f"P{i:03d}" for i in range(len(pts))]
+    table(wb, "Data points", pts, [
+        ("row_id", "Row", 7, "text"), ("constraint", "Constraint", 28, "text"), ("tier", "Series", 18, "text"), ("date", "Date", 11, "text"),
+        ("value", "Value as published", 12, "num"), ("unit", "Unit", 16, "text"), ("currency", "Currency", 8, "text"),
+        ("price_basis", "Nominal or real", 9, "text"), ("source_title", "Source", 40, "text"), ("source_url", "Link", 14, "url"),
+        ("source_type", "Source type", 10, "text"), ("note", "How the value was taken", 60, "text")],
+        intro="Values exactly as published (not inflation-adjusted).")
+
+    if not nc.empty:
+        nc = nc.copy().sort_values("date_effective")
+        nc["constraint"] = nc.constraint_id.map(lab)
+    table(wb, "Laws & timeline", nc, [
+        ("date_effective", "Date", 11, "text"), ("constraint", "Constraint", 28, "text"), ("change", "What changed", 62, "text"),
+        ("direction", "Direction", 11, "tag"), ("status", "Status", 10, "tag"), ("jurisdiction", "Where", 12, "text"),
+        ("source_url", "Link", 14, "url"), ("note", "Notes", 60, "text"), ("item_id", "ID", 7, "text")],
+        intro=f"Sorted by date. Dates after {a.date or 'today'} are upcoming. Patent expiry dates are approximate.")
+
+    if not co.empty:
+        co = co.copy()
+        co["constraint"] = co.constraint_id.map(lab)
+        co = co.sort_values(["constraint_id", "status", "company"])
+    table(wb, "Companies", co, [
+        ("company", "Company", 24, "text"), ("constraint", "Builds on", 28, "text"), ("what_they_do", "What they do", 52, "text"),
+        ("status", "Status", 11, "tag"), ("status_evidence_url", "Evidence", 13, "url"), ("consensus", "Well known?", 9, "text"),
+        ("country", "Country", 13, "text"), ("founded", "Founded", 9, "text"), ("last_funding_usd", "Last round (USD)", 13, "usd"),
+        ("last_funding_date", "Last round date", 11, "text"), ("note", "Notes", 60, "text")],
+        intro="One row per company and constraint, so a company can appear more than once.")
+    table(wb, "Funding rounds", fe.sort_values(["company", "date"]) if not fe.empty else fe, [
+        ("company", "Company", 26, "text"), ("date", "Date", 11, "text"), ("amount_usd", "Amount (USD)", 14, "usd"),
+        ("round", "Round", 18, "text"), ("source_url", "Link", 14, "url"), ("note", "Notes", 70, "text")],
+        intro="Disclosed rounds in the activity window. Blank amount = not disclosed in USD.")
+    if not act.empty:
+        act = act.copy()
+        act["constraint"] = act.constraint_id.map(lab)
+    table(wb, "Activity", act, [
+        ("constraint", "Constraint", 40, "text"), ("companies_count", "Companies", 10, "int"), ("funding_usd_5y", "Funding", 15, "usd"),
+        ("launches_count", "Launches", 9, "int"), ("papers_last3y", "Papers, last 3 years", 10, "int"),
+        ("papers_prev3y", "Papers, 3 years before", 10, "int"), ("notes", "Breakdown", 60, "text")],
+        intro="Blank = nothing found, which means unknown, not zero.")
+    table(wb, "Failures & exits", fail, [
+        ("company", "Company", 26, "text"), ("year", "Year", 8, "text"), ("what_failed", "What happened", 60, "text"),
+        ("reason", "Why", 60, "text"), ("source_url", "Link", 14, "url")])
+    if not absn.empty:
+        absn = absn.copy()
+        absn["constraint"] = absn.constraint_id.map(lab)
+    table(wb, "Searches, no result", absn, [
+        ("constraint", "Constraint", 30, "text"), ("query", "Search", 50, "text"), ("date_searched", "Date", 11, "text"),
+        ("result_summary", "What came back", 80, "text")],
+        intro="Evidence of absence: searches that found nothing relevant.")
+    intro = None
+    if not ver.empty:
+        ver = ver.copy()
+        ver["verdict"] = ver.verdict.str.upper().str.strip()
+        if "item" not in ver:
+            ver["item"] = ""
+        if "row_id" in ver:
+            ver["item"] = ver.item.where(ver.item != "", ver.row_id)
+        vc = ver.verdict.value_counts()
+        n = len(ver)
+        intro = (f"{vc.get('MATCH', 0)} of {n} checks matched ({vc.get('MATCH', 0) / n * 100:.1f}%), "
+                 f"{vc.get('MISMATCH', 0)} mismatched (corrected before the report), {vc.get('UNVERIFIABLE', 0)} could not be opened.")
+    table(wb, "Verification", ver, [
+        ("item", "Row or item", 10, "text"), ("file", "Table", 14, "text"), ("field_checked", "What was checked", 20, "text"),
+        ("verdict", "Result", 14, "tag"), ("claimed", "Claimed", 36, "text"), ("found", "Found on the page", 36, "text"),
+        ("url_opened", "Link", 13, "url"), ("note", "Notes", 50, "text")], intro=intro)
+
+    out = a.out or f"paradigma_{re.sub(r'[^a-z0-9]+', '-', (a.field or 'scan').lower()).strip('-')}.xlsx"
+    wb.save(out)
+    print(f"wrote {out}: {len(wb.worksheets)} sheets")
+
+
 # -------------------------------------------------------------------- main
 def main():
     p = argparse.ArgumentParser(description="PARADIGMA analysis engine")
@@ -422,6 +901,8 @@ def main():
     c.add_argument("--curves", default="curves.csv")
     c.add_argument("--activity", default="activity.csv")
     c.add_argument("--cut", type=float, default=0.5)
+    c.add_argument("--whynot", default="whynot.csv", help="colours the dots by why-not label when the file exists")
+    c.add_argument("--title", help='chart title, e.g. "Gap matrix: dental aligners, 2016-2025"')
     c.add_argument("--outdir", default=".")
     c.add_argument("--plots", action="store_true")
     c.set_defaults(f=cmd_gap)
@@ -432,6 +913,17 @@ def main():
     c.add_argument("--end", type=int, default=2025)
     c.add_argument("--out", default="papers.csv")
     c.set_defaults(f=cmd_papers)
+
+    c = sp.add_parser("workbook", help="readable Excel workbook from the run's CSVs (needs openpyxl)")
+    c.add_argument("--field")
+    c.add_argument("--region", default="global")
+    c.add_argument("--start", type=int)
+    c.add_argument("--end", type=int)
+    c.add_argument("--date", help="run date, YYYY-MM-DD")
+    c.add_argument("--constraints", default="constraints.csv")
+    c.add_argument("--points", default="points.csv")
+    c.add_argument("--out", help="output .xlsx (default paradigma_<field>.xlsx)")
+    c.set_defaults(f=cmd_workbook)
 
     a = p.parse_args()
     if hasattr(a, "outdir"):

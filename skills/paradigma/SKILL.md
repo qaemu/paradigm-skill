@@ -35,7 +35,7 @@ description: PARADIGMA maps which constraints (costs, performance, laws, patents
 
 1. Create a task list with phases 1–7.
 2. Make a working folder `paradigma_<field-slug>_<YYYY-MM-DD>/` and copy the analysis engine into it (see Appendix A for where to find it). Then run `python3 paradigma.py cpi`. This downloads US CPI from FRED for the inflation adjustment.
-3. Create the CSVs using the schemas in Appendix B: `constraints.csv`, `points.csv`, `activity.csv`, `companies.csv`, `noncost.csv`, `whynot.csv`.
+3. Create the CSVs using the schemas in Appendix B: `constraints.csv`, `points.csv`, `activity.csv`, `companies.csv`, `funding_events.csv`, `noncost.csv`, `whynot.csv`, `failures.csv`, `absence.csv`. Later phases add `findings.csv`, `verification.csv` and, if needed, `curve_review.csv`.
 
 ## Phase 1: Break the field into constraints
 
@@ -57,6 +57,7 @@ For each constraint, record:
 - `family`: cost | performance | legal | patent | skill | norm | supply | economic
 - a **metric expressed per unit of performance** where possible ($/kWh, $ per sensor channel, $/kg payload, $/hour, Wh/kg)
 - `better`: lower or higher
+- a `short_name` of 30 characters or less, used in the chart key
 - a one-line note on why it matters to the field
 
 Keep industrial and consumer grades as separate tiers.
@@ -140,11 +141,13 @@ Use the **same query wording across all constraints** so the signals are compara
 
 Run:
 
+Before running it, set `direction` in `constraints.csv` for every constraint (`loosening`, `tightening`, `mixed` or `pressure`), and fill `exclude_reason` for any constraint that should stay off the chart (for example "price data not obtainable" or "curve withdrawn after review"). Only loosening constraints compete for white space. The others are listed under the chart with their reason, and show as `NOT PLACED` in `gap_matrix.csv`.
+
 ```
-python3 paradigma.py gap --plots
+python3 paradigma.py gap --plots --title "Gap matrix: <field>, <START>–<END>"
 ```
 
-The script assigns each constraint to a quadrant:
+The script assigns each placed constraint to a quadrant:
 
 - **WHITE SPACE:** the constraint fell and few companies are building on it.
 - **CROWDED:** it fell and many companies are building on it.
@@ -162,7 +165,11 @@ A high `research_to_commerce` value means the research is ahead of the companies
    - **TRIED TOO EARLY:** a named company failed before the constraint fell. Give dates.
    - **BLOCKED:** name the blocker and whether it's falling.
 
+   - **N/A-CROWDED:** the check found many serious builders the scan missed. Say who.
+
 Only UNTRIED and TRIED TOO EARLY are presented as white space. BLOCKED items go to a **watch list** together with the blocker to monitor. Flag HYPE RISK items explicitly.
+
+After writing `whynot.csv`, run `gap --plots` again: the chart colours each dot by its why-not result.
 
 ## Phase 6: Independent verification
 
@@ -171,7 +178,7 @@ Only UNTRIED and TRIED TOO EARLY are presented as white space. BLOCKED items go 
    - every point behind an A- or B-grade curve (or a random sample of at least 40 if there are more than 150)
    - every company claim and funding figure that appears in the summary
    - every non-cost item
-3. It returns a mismatch CSV.
+3. It writes `verification.csv` (schema in Appendix B): one row per check, MATCH, MISMATCH or UNVERIFIABLE.
 4. Fix or drop the mismatched rows, then run `curves` and `gap` again.
 5. Report the verification pass rate.
 
@@ -179,7 +186,9 @@ If no Agent tool is available, do this as a separate pass yourself and state in 
 
 ## Phase 7: Deliverables
 
-**1. Report.** Use the document artifact type if this session lists one. Otherwise publish an HTML page, or write .md if the user asks for that. Sections in this order:
+**Charts come from the engine, never drawn by hand.** `curves --plots` writes one chart per series to `plots/curve_<id>_<series>.png` and `gap --plots` writes `plots/gap_matrix.png`, all in the same style: white page, light pink plot area, near-black text, one pink accent, labels that never overlap, and margins that never clip. Put these PNGs in the report as they are.
+
+**1. Report.** Use the document artifact type if this session lists one. Otherwise publish an HTML page, or write .md if the user asks for that. Write it for a reader with no background in market research: explain each term the first time it appears. Sections in this order:
 
 1. **Panorama** (one page): field, region, window (`START–END`, `years`), date.
    - Top constraints that fell, with fold change and grade.
@@ -188,10 +197,10 @@ If no Agent tool is available, do this as a separate pass yourself and state in 
    - Crowded zones.
    - Hype risks.
    - **Dated changes coming in the next 1–5 years:** laws taking effect, patents expiring.
-2. **Gap matrix** chart.
+2. **Gap matrix** chart (`plots/gap_matrix.png`), with a table of the placed constraints under it.
 3. **Constraint cards**, one per constraint:
    - definition
-   - curve chart
+   - curve chart (`plots/curve_<id>_<series>.png`)
    - robust yearly change with its 95% confidence interval
    - fold change over the window, trend shape (accelerating / steady / decelerating) and grade
    - thresholds
@@ -206,16 +215,13 @@ If no Agent tool is available, do this as a separate pass yourself and state in 
    - what paid databases (PitchBook, Gartner and so on) would add
 7. **Sources.**
 
-**2. Data workbook.** Use the spreadsheet artifact type if listed, otherwise .xlsx. Write it for a reader with no background in market research:
+**2. Data workbook (.xlsx).** Built by the engine so it always has the same layout. Write `findings.csv` (one row per headline finding, in plain words) and, if a reviewer changed a curve's grade or wants a note on it, `curve_review.csv`. Then run:
 
-- First sheet **Start here**: what the run is, how to read it in 5 minutes, a plain-words glossary (constraint, fold change, grade, drop and activity scores, each quadrant, each why-not label, company status, verification verdicts) and a list of sheets.
-- Second sheet **Key findings**: one row per finding, with the number, the confidence and what it means.
-- Then: gap matrix, why-not, constraints, curves, yearly medians, data points, laws and timeline, companies, funding, activity, failures, searches with no result, verification.
-- Plain-language column headers (not CSV field names), and drop internal columns.
-- Full cell grid, a dark header row with white text, light zebra rows, wrapped text, frozen header row, filters on every table, and clickable source links.
-- Colour-code labels (verdicts, quadrants, why-not results, status, grades) with dark text on light fills so contrast stays high.
+```
+python3 paradigma.py workbook --field "<field>" --region "<region>" --start <START> --end <END> --date <YYYY-MM-DD>
+```
 
-In the report too, explain each term the first time it appears.
+It writes `paradigma_<field>.xlsx` for a reader with no background: a **Start here** sheet (what the run is, how to read it in 5 minutes, a glossary, a list of sheets), then **Key findings**, then every table with plain-language headers, a full cell grid, a dark header row with white text, zebra rows, colour-coded labels with dark text on light fills, frozen headers, filters and clickable source links. Sheets whose CSV is missing say so instead of breaking. Do not build the workbook by hand. If a spreadsheet artifact type is listed and the user wants it there, load the same tables into it in the same order.
 
 **3. Final reply:** 3–5 lines covering the biggest shifts, the top white spaces, the main confidence caveat, and the deliverables.
 
@@ -238,13 +244,16 @@ The engine is `scripts/paradigma.py`, bundled next to this SKILL.md. Copy it int
 
 Never rewrite the engine from memory. If none of these work, stop and tell the user the engine is missing.
 
-Subcommands: `cpi`, `curves`, `gap`, `papers`. Run `python3 paradigma.py <cmd> -h` for options. It requires pandas, numpy and matplotlib, and uses scipy if present.
+Subcommands: `cpi`, `curves`, `gap`, `papers`, `workbook`. Run `python3 paradigma.py <cmd> -h` for options. It requires pandas, numpy and matplotlib, uses scipy if present, and needs openpyxl for `workbook` (`pip install openpyxl`).
 
 ## Appendix B: CSV schemas
 
 **constraints.csv**
-`constraint_id,name,family,unit,better,tier_note,why_it_matters,qualitative_change_0to3,qualitative_justification,threshold_note`
+`constraint_id,name,short_name,family,unit,better,tier_note,why_it_matters,direction,exclude_reason,qualitative_change_0to3,qualitative_justification,threshold_note`
 - `better`: `lower` or `higher` (measured constraints only).
+- `short_name`: 30 characters or less, for the chart key.
+- `direction`: `loosening` | `tightening` | `mixed` | `pressure`. Only `loosening` (or blank) is placed on the gap matrix.
+- `exclude_reason`: blank, or a short reason to keep it off the gap matrix.
 - `qualitative_change_0to3`: filled for non-cost constraints, or for any constraint without a measurable curve. Leave it blank for measured ones.
 
 **points.csv** (one row per published data point)
@@ -270,7 +279,27 @@ Subcommands: `cpi`, `curves`, `gap`, `papers`. Run `python3 paradigma.py <cmd> -
 
 **whynot.csv**
 `constraint_id,label,failed_attempts,blockers,blocker_trend,source_urls,note`
-- `label`: `UNTRIED` | `TRIED TOO EARLY` | `BLOCKED`.
+- `label`: `UNTRIED` | `TRIED TOO EARLY` | `BLOCKED` | `N/A-CROWDED`.
+
+**funding_events.csv** (one row per disclosed round in the activity window; keep each round once)
+`company,date,amount_usd,round,source_url,note`
+
+**failures.csv**
+`company,what_failed,year,reason,source_url`
+
+**absence.csv** (searches that found nothing relevant; evidence for UNTRIED)
+`constraint_id,query,date_searched,result_summary`
+
+**verification.csv** (written by the independent check)
+`item,file,field_checked,claimed,found,verdict,url_opened,note`
+- `verdict`: `MATCH` | `MISMATCH` | `UNVERIFIABLE`.
+
+**findings.csv** (headline results for the workbook, in plain words)
+`finding,constraint_ids,number,confidence,meaning`
+- `confidence`: a curve grade (`A`–`D`) or `High` | `Medium` | `Low`.
+
+**curve_review.csv** (optional)
+`constraint_id,tier,grade_override,note`
 
 **paper_queries.csv**
 `constraint_id,query`
@@ -281,7 +310,8 @@ Subcommands: `cpi`, `curves`, `gap`, `papers`. Run `python3 paradigma.py <cmd> -
 - `rejected_points.csv`
 - `gap_matrix.csv`
 - `papers.csv` and `papers_summary.csv`
-- `plots/*.png`
+- `plots/curve_<id>_<series>.png` and `plots/gap_matrix.png`
+- `paradigma_<field>.xlsx` (from `workbook`)
 
 **Curve grades:**
 - **A:** at least 8 periods, at least 3 sources, at most 20% low-n periods, and a tight confidence interval.

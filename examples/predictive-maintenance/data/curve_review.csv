@@ -1,0 +1,5 @@
+constraint_id,tier,grade_override,note
+C01,aws_s3_standard,,Price moved in steps; flat since 2016. Use the observed fall (7.8×) rather than the fitted line.
+C02,gpu_fp32_consumer,,Wikipedia launch prices only; base-clock fp32.
+C04,all,C,"Withdrawn: one vendor step in 2014, flat since."
+C06,edge_module_board,,6 points; range crosses zero.
