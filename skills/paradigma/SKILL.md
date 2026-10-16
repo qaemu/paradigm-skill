@@ -78,6 +78,7 @@ Keep industrial and consumer grades as separate tiers.
 - For non-USD values, convert using a cited exchange rate for that date and put the rate and source in `note`. If you can't cite a rate, leave the point out. The script rejects non-USD rows.
 - Don't mix tiers or product generations in one series.
 - **Targets per curve:** at least 3 points per period, at least 5 periods, and at least 2 independent sources. Report shortfalls; don't hide them.
+- **Keep points from before `START`.** If a source gives older values for the same series, record them in `points.csv` like any other point (same rules). Don't spend extra searches on them. The engine leaves them out of this window's curves and saves them in `out_of_window.csv`, so a later forecast (e.g. TREND-PREDICTOR, which needs 10+ years of history) can reuse them.
 
 **Run the analysis:**
 
@@ -86,7 +87,7 @@ python3 paradigma.py curves --start <START> --end <END> --plots
 ```
 
 - Choose annual vs quarterly with `--period auto`. Quarterly is used only when the data is dense.
-- Check `rejected_points.csv` and fix or drop those rows.
+- Check `rejected_points.csv` and fix or drop those rows. Points outside the window are not errors: they go to `out_of_window.csv` and stay out of the analysis.
 - Look at every plot. If a curve mixes tiers or generations, split it and run again.
 
 **Thresholds.** For each improving constraint, ask: what became viable at today's level, and what becomes viable at the next 10x? Back each answer with a cited first product or deployment that the threshold enabled. Record `threshold_crossed` in `activity.csv` and `threshold_note` in `constraints.csv`.
@@ -307,7 +308,8 @@ Subcommands: `cpi`, `curves`, `gap`, `papers`, `workbook`. Run `python3 paradigm
 **Script outputs:**
 - `curves.csv`: robust yearly change, 95% confidence interval, fold change, class, trend shape, grade
 - `periods.csv`: median, n and interquartile range per period, with a low-confidence flag when n < 3
-- `rejected_points.csv`
+- `rejected_points.csv` (rows with an error: no source, non-USD, bad date or value)
+- `out_of_window.csv` (valid points dated outside `START`–`END`, kept for reuse and not analysed)
 - `gap_matrix.csv`
 - `papers.csv` and `papers_summary.csv`
 - `plots/curve_<id>_<series>.png` and `plots/gap_matrix.png`
@@ -327,7 +329,7 @@ Subcommands: `cpi`, `curves`, `gap`, `papers`, `workbook`. Run `python3 paradigm
 > Rules:
 > - Every row needs a working source URL that you actually opened. Never estimate or recall numbers from memory. If you can't find data for a period, leave that period out.
 > - Record values exactly as published, with currency, nominal or real basis, and date precision. Keep industrial and consumer tiers separate.
-> - Aim for at least 3 points per year and at least 2 independent sources per constraint across <START>–<END>. Leave out anything dated outside that window.
+> - Aim for at least 3 points per year and at least 2 independent sources per constraint across <START>–<END>. If a source you opened also gives older values for the same series, include them too (same rules); don't search specially for them.
 > - Use these sources in priority order: primary datasets (Our World in Data, Santa Fe Performance Curve Database, BloombergNEF public summaries, IEA, NREL, USGS, BLS/FRED, academic learning-curve papers); then manufacturer and distributor price lists plus Wayback Machine snapshots; then reputable press and public report summaries.
 > - For companies: give status (announced, deployed or paying) with an evidence URL. A funding announcement alone is "announced."
 > After the CSV rows, add up to 5 lines describing coverage gaps.

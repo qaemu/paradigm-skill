@@ -196,7 +196,7 @@ Avoid small and "flash" models for the main run. To check any model, including f
 
 <br>
 
-1. **Normalize.** Values are expressed per unit of performance ($/kWh, $ per sensor channel, $/kg payload). USD values are converted to constant dollars with US CPI from FRED. Non-USD values need a cited exchange rate, or they're rejected.
+1. **Normalize.** Values are expressed per unit of performance ($/kWh, $ per sensor channel, $/kg payload). USD values are converted to constant dollars with US CPI from FRED. Non-USD values need a cited exchange rate, or they're rejected. Valid points dated outside the window are not analysed but are kept in `out_of_window.csv`, so a longer-horizon forecast can reuse them.
 2. **Bin.** Data is grouped by year, or by quarter when it's dense enough: at least 3 points in at least 60% of quarters, and at least 8 quarters. Each period keeps its median, its interquartile range and its count, and periods with fewer than 3 points are flagged.
 3. **Fit.** A Theil–Sen line is fitted on log₁₀ of the period medians, so each period gets one vote and outliers barely move it. The slope gives the yearly % change with a 95% confidence interval. The engine never reports an endpoint-to-endpoint percentage as a trend.
 4. **Shape.** The last 5 years are compared with the whole window to classify the trend as accelerating, steady or decelerating.

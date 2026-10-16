@@ -196,7 +196,7 @@ Evitá los modelos chicos y "flash" para la corrida principal. Para probar cualq
 
 <br>
 
-1. **Normalizar.** Los valores se expresan por unidad de prestación ($/kWh, $ por canal de sensor, $/kg de carga útil). Los valores en USD se pasan a dólares constantes con el IPC de EE. UU. de FRED. Los valores en otras monedas necesitan un tipo de cambio citado; si no, se rechazan.
+1. **Normalizar.** Los valores se expresan por unidad de prestación ($/kWh, $ por canal de sensor, $/kg de carga útil). Los valores en USD se pasan a dólares constantes con el IPC de EE. UU. de FRED. Los valores en otras monedas necesitan un tipo de cambio citado; si no, se rechazan. Los puntos válidos fechados fuera de la ventana no se analizan, pero se guardan en `out_of_window.csv` para que un pronóstico de más largo plazo pueda reutilizarlos.
 2. **Agrupar.** Los datos se agrupan por año, o por trimestre cuando hay suficiente densidad: al menos 3 puntos en al menos el 60% de los trimestres, y al menos 8 trimestres. Cada período guarda su mediana, su rango intercuartil y su cantidad, y se marcan los períodos con menos de 3 puntos.
 3. **Ajustar.** Se ajusta una recta de Theil–Sen sobre el log₁₀ de las medianas de cada período, así cada período tiene un voto y los valores atípicos casi no la mueven. La pendiente da el cambio porcentual anual con un intervalo de confianza del 95%. El motor nunca informa como tendencia el porcentaje entre el primer y el último punto.
 4. **Forma.** Se comparan los últimos 5 años con toda la ventana para clasificar la tendencia como acelerando, estable o desacelerando.

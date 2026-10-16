@@ -1,6 +1,6 @@
 {
   "name": "paradigma",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Constraint-shift panorama of any field: which constraints fell, who is building on them, and where the open gaps are.",
   "author": {
     "name": "qaemu"

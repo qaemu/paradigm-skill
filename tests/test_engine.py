@@ -6,7 +6,7 @@
 Builds a fixture with a known -20%/yr cost curve (plus a 100x outlier), a known
 +30%/yr performance curve with quarterly data, a flat sparse series, a series with
 only 3 periods, and two bad rows that must be rejected. Also reruns the curves on a
-10-year window to check that points outside it are dropped. Uses a flat CPI so the expected trends are exact.
+10-year window to check that points outside it are left out of the curves but kept in out_of_window.csv. Uses a flat CPI so the expected trends are exact.
 """
 import os
 import subprocess
@@ -85,7 +85,9 @@ def main():
             has_xl, sheets = False, []
         run(d, "curves", "--start", "2012", "--end", "2021", "--outdir", "w10")
         cw = pd.read_csv(os.path.join(d, "w10", "curves.csv")).set_index("constraint_id")
-        rw = pd.read_csv(os.path.join(d, "w10", "rejected_points.csv"))
+        ow = pd.read_csv(os.path.join(d, "w10", "out_of_window.csv"))
+        rw_path = os.path.join(d, "w10", "rejected_points.csv")
+        rw = pd.read_csv(rw_path) if os.path.exists(rw_path) else pd.DataFrame(columns=["reject_reason"])
         cv = pd.read_csv(os.path.join(d, "curves.csv")).set_index("constraint_id")
         rej = pd.read_csv(os.path.join(d, "rejected_points.csv"))
         gm = pd.read_csv(os.path.join(d, "gap_matrix.csv")).set_index("constraint_id")
@@ -101,7 +103,10 @@ def main():
             "C1 lands in crowded": gm.loc["C1", "quadrant"].startswith("CROWDED"),
             "C5 with 3 periods still gets a trend": cv.loc["C5", "annual_change_pct"] < 0,
             "10-year window keeps C1 inside 2012-2021": int(str(cw.loc["C1", "first_period"])[:4]) >= 2012 and int(str(cw.loc["C1", "last_period"])[:4]) <= 2021,
-            "points outside the window are rejected with a reason": rw.reject_reason.str.startswith("outside window").sum() > 0,
+            "points outside the window are kept in out_of_window.csv, not rejected":
+                len(ow) > 0 and ow.window_note.str.startswith("outside window").all()
+                and not rw.reject_reason.astype(str).str.startswith("outside window").any(),
+            "bad rows are still rejected in the windowed run": len(rw) == 2,
             "tightening constraint kept off the matrix": gm.loc["C6", "quadrant"] == "NOT PLACED",
             "workbook opens on Start here, then Key findings": (not has_xl) or sheets[:2] == ["Start here", "Key findings"],
             "plots written": os.path.exists(os.path.join(d, "plots", "gap_matrix.png")),
